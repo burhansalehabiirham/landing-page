@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Data Siswi & Komunikasi Orang Tua</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #818cf8;
+            --accent-color: #f43f5e;
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            font-size: 1.8rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* --- Hero Section (Landing Page) --- */
+        .hero {
+            margin-top: 80px;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: var(--white);
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            box-shadow: var(--shadow);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #6b7280;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            margin-left: 10px;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        /* --- Form Section --- */
+        .card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 1rem;
+        }
+
+        .card-header h2 {
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 600px) {
+            .row.two-cols {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* --- Dashboard/Communication Section --- */
+        .status-panel {
+            background: linear-gradient(to bottom right, #ffffff, #f9fafb);
+        }
+
+        .message-list {
+            margin-top: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message-item {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .message-item strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--primary-color);
+        }
+
+        .generated-number-area {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* --- Modal/Popup --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #9ca3af;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* --- Notification Toast --- */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--white);
+            color: var(--text-color);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--accent-color);
+            animation: slideIn 0.3s ease-out forwards;
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* --- Icons (Simple SVG) --- */
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <span>🏫</span> SiswiConnect
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home">Beranda</a></li>
+                <li><a href="#form">Formulir</a></li>
+                <li><a href="#dashboard">Status & Info</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Landing Page / Hero -->
+    <section class="hero" id="home">
+        <h1>Portal Data Siswi & Komunikasi Digital</h1>
+        <p>Platform terintegrasi bagi orang tua untuk memperbarui data identitas anak secara daring dan berkomunikasi dua arah dengan pihak sekolah secara efisien.</p>
+        <div>
+            <a href="#form" class="btn">Isi Data Sekarang</a>
+            <a href="#dashboard" class="btn btn-outline">Cek Status</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        
+        <!-- Left Column: Form -->
+        <main class="card" id="form">
+            <div class="card-header">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                    Formulir Identitas Siswi
+                </h2>
+                <p style="font-size: 0.9rem; color: #666;">Silakan lengkapi data di bawah ini dengan benar.</p>
+            </div>
+
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="namaSiswi">Nama Lengkap Siswi</label>
+                    <input type="text" id="namaSiswi" class="form-control" placeholder="Contoh: Putri Ayu Permata" required>
+                </div>
+
+                <div class="row two-cols">
+                    <div class="form-group">
+                        <label for="tempatLahir">Tempat Lahir</label>
+                        <input type="text" id="tempatLahir" class="form-control" placeholder="Kota Kelahiran" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tglLahir">Tanggal Lahir</label>
+                        <input type="date" id="tglLahir" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="alamat">Alamat Sekarang</label>
+                    <textarea id="alamat" class="form-control" rows="3" placeholder="Nama Jalan, RT/RW, Kelurahan, Kecamatan" required></textarea>
+                </div>
+
+                <div class="row two-cols">
+                    <div class="form-group">
+                        <label for="noHP">Nomor HP (WhatsApp)</label>
+                        <input type="tel" id="noHP" class="form-control" placeholder="08xxxxxxxxxx" required>
+                        <small style="color: #666; font-size: 0.8rem;">Nomor ini akan didaftarkan ke sistem notifikasi.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="keperluan">Keperluan</label>
+                        <select id="keperluan" class="form-control" required>
+                            <option value="">-- Pilih Keperluan --</option>
+                            <option value="Update Data">Update Data Berkala</option>
+                            <option value="Pendaftaran Baru">Pendaftaran Siswa Baru</option>
+                            <option value="Izin Sakit">Laporan Izin Sakit</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="keterangan">Keterangan / Pesan Tambahan</label>
+                    <textarea id="keterangan" class="form-control" rows="4" placeholder="Tuliskan detail pesan atau keterangan yang ingin disampaikan..."></textarea>
+                </div>
+
+                <div style="text-align: right; margin-top: 1rem;">
+                    <button type="submit" class="btn" style="width: 100%;">Kirim Data</button>
+                </div>
+            </form>
+        </main>
+
+        <!-- Right Column: Dashboard & 2-Way Communication -->
+        <aside>
+            <!-- Generator Nomor HP Panel -->
+            <div class="card status-panel" id="dashboard">
+                <div class="card-header">
+                    <h2>
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        Pusat Informasi
+                    </h2>
+                </div>
+                <p style="font-size: 0.9rem;">Sistem Komunikasi 2 Arah & Generator ID Kontak.</p>
+
+                <div class="generated-number-area">
+                    <strong>ID Grup Notifikasi:</strong>
+                    <div id="generatedGroupNumber" style="font-size: 1.5rem; font-weight: bold; margin: 10px 0;">0812-SISWI-INFO</div>
+                    <small>Semua nomor HP yang terdaftar akan otomatis terhubung ke ID ini untuk menerima update.</small>
+                    <button onclick="copyGeneratedNumber()" class="btn btn-outline" style="font-size: 0.8rem; padding: 5px 15px; margin-top: 10px;">Salin ID</button>
+                </div>
+            </div>
+
+            <!-- Live Feed / Messages -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>📨 Pesan Masuk & Keluar</h3>
+                </div>
+                <div id="messageList" class="message-list">
+                    <div class="message-item">
+                        <strong>Sistem Sekolah</strong>
+                        <span>Selamat datang di portal layanan orang tua.</span>
+                        <div style="font-size: 0.7rem; color: #999; text-align: right; margin-top: 5px;">Baru saja</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Modal Pop Up -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div style="text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+                <h3 class="modal-title">Data Berhasil Terkirim!</h3>
+                <p style="margin-bottom: 1rem;">Terima kasih, Bapak/Ibu. Data <strong id="modalStudentName">Siswi</strong> telah kami terima dan sedang diproses.</p>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 1.5rem;">
+                    Nomor HP Anda telah didaftarkan ke sistem broadcast otomatis. Informasi selanjutnya akan dikirim ke <span id="modalPhone" style="font-weight: bold;"></span>.
+                </p>
+                <button class="btn" onclick="closeModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // --- State Management ---
+        const appState = {
+            students: [],
+            generatedGroupId: "0812-SISWI-" + Math.floor(Math.random() * 1000),
+            messages: []
+        };
+
+        // --- Inisialisasi ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Tampilkan ID Grup Generator yang unik
+            document.getElementById('generatedGroupNumber').textContent = appState.generatedGroupId;
+        });
+
+        // --- Form Handling ---
+        const form = document.getElementById('studentForm');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 1. Ambil Data
+            const namaSiswi = document.getElementById('namaSiswi').value;
+            const tempatLahir = document.getElementById('tempatLahir').value;
+            const tglLahir = document.getElementById('tglLahir').value;
+            const alamat = document.getElementById('alamat').value;
+            const noHP = document.getElementById('noHP').value;
+            const keperluan = document.getElementById('keperluan').value;
+            const keterangan = document.getElementById('keterangan').value;
+
+            // 2. Validasi Sederhana
+            if(!namaSiswi || !noHP) {
+                showToast('Mohon lengkapi nama dan nomor HP.', 'error');
+                return;
+            }
+
+            // 3. Simpan ke State (Simulasi Database)
+            const newStudent = {
+                id: Date.now(),
+                namaSiswi,
+                tempatLahir,
+                tglLahir,
+                alamat,
+                noHP,
+                keperluan,
+                keterangan,
+                timestamp: new Date().toLocaleString()
+            };
+
+            appState.students.push(newStudent);
+
+            // 4. Trigger Fitur "2 Arah" (Simulasi Balasan Otomatis)
+            addMessageToDashboard(`Orang Tua (${namaSiswi})`, `Mengirim data keperluan: ${keperluan}.`, 'out');
+            
+            setTimeout(() => {
+                addMessageToDashboard('Sistem Sekolah', `Data diterima untuk ${namaSiswi}. Nomor ${noHP} telah di-generate ke dalam grup info siswi.`, 'in');
+                showToast(`Nomor ${noHP} berhasil didaftarkan ke sistem info.`);
+            }, 1500);
+
+            // 5. Tampilkan Modal Sukses
+            document.getElementById('modalStudentName').textContent = namaSiswi;
+            document.getElementById('modalPhone').textContent = noHP;
+            openModal();
+
+            // 6. Reset Form
+            form.reset();
+        });
+
+        // --- Fitur Komunikasi 2 Arah (Dashboard) ---
+        function addMessageToDashboard(sender, text, type) {
+            const list = document.getElementById('messageList');
+            const item = document.createElement('div');
+            item.className = 'message-item';
+            
+            // Warna border beda berdasarkan pengirim
+            const borderColor = type === 'in' ? 'var(--primary-color)' : 'var(--accent-color)';
+            item.style.borderLeftColor = borderColor;
+
+            item.innerHTML = `
+                <strong>${sender}</strong>
+                <span>${text}</span>
+                <div style="font-size: 0.7rem; color: #999; text-align: right; margin-top: 5px;">${new Date().toLocaleTimeString()}</div>
+            `;
+            
+            // Masukkan ke paling atas
+            list.insertBefore(item, list.firstChild);
+        }
+
+        // --- Modal Logic ---
+        const modal = document.getElementById('successModal');
+
+        function openModal() {
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // --- Copy Generator Logic ---
+        function copyGeneratedNumber() {
+            const numberText = document.getElementById('generatedGroupNumber').innerText;
+            navigator.clipboard.writeText(numberText).then(() => {
+                showToast('ID Grup berhasil disalin!');
+            }).catch(err => {
+                showToast('Gagal menyalin text.', 'error');
+            });
+        }
+
+        // --- Toast Notification Logic ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            
+            // Icon based on type
+            const icon = type === 'success' ? '✅' : '⚠️';
+            
+            toast.innerHTML = `
+                <span>${icon} ${message}</span>
+                <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;margin-left:10px;">&times;</button>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+    </script>
+</body>
+</html>

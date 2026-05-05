@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website SMA IT Putri Abuhurairah Mataram</title>
+    <!-- Menggunakan Font Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Menggunakan FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- VARIABEL & RESET --- */
+        :root {
+            --primary-color: #003366; /* Biru Tua Akademis */
+            --secondary-color: #f39c12; /* Emas */
+            --text-dark: #333;
+            --text-light: #fff;
+            --bg-light: #f4f7f6;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* --- TOP BAR (WA, Gmail, Search) --- */
+        .top-bar {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 8px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .top-bar .contact-info span {
+            margin-right: 20px;
+        }
+
+        .top-bar .social-search a {
+            margin-left: 15px;
+            transition: var(--transition);
+        }
+
+        .top-bar .social-search a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            height: 60px; /* Sedikit ditingkatkan agar logo kecil tidak terlihat terlalu kosong */
+        }
+
+        .logo {
+            display: flex;
+            align-items: center; /* Posisikan ikon dan teks beriringan */
+            gap: 10px;
+            color: var(--primary-color);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .logo i {
+            color: var(--secondary-color);
+            font-size: 20px; /* Ikon disesuaikan agar seimbang dengan teks 12px */
+        }
+
+        /* MODIFIKASI 1: Ukuran tulisan dekat logo di perkecil menjadi 12px */
+        .logo h4 {
+            font-size: 14px; 
+            margin: 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 10px;
+            height: 100%;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-dark);
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(0, 51, 102, 0.05);
+        }
+
+        .nav-link i {
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        /* Dropdown Style */
+        .dropdown {
+            position: absolute;
+            top: 80px;
+            left: 0;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+            border-top: 3px solid var(--secondary-color);
+            border-radius: 0 0 5px 5px;
+        }
+
+        .nav-item:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown li {
+            position: relative;
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .dropdown a:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        /* Mobile Menu Button */
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        /* --- SLIDER GAMBAR (10 Gambar) --- */
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-content {
+            position: absolute;
+            bottom: 80px;
+            left: 5%;
+            color: #fff;
+            background: rgba(0, 51, 102, 0.8);
+            padding: 20px;
+            border-left: 5px solid var(--secondary-color);
+            max-width: 600px;
+            border-radius: 5px;
+        }
+
+        /* --- RUNNING TEXT VERTIKAL --- */
+        .running-text-section {
+            background: var(--primary-color);
+            color: #fff;
+            height: 50px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .rt-label {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 5px 15px;
+            font-weight: bold;
+            border-radius: 3px;
+            margin-right: 20px;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            z-index: 2;
+            flex-shrink: 0; /* Mencegah label tertutup */
+        }
+
+        .rt-container {
+            flex-grow: 1;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center; /* Pusatkan horizontal */
+            align-items: center;     /* Pusatkan vertikal */
+        }
+
+        .rt-content {
+            position: absolute;
+            width: 100%;
+            text-align: center; /* Pastikan teks di tengah */
+            
+            /* Animasi Baru: Masuk, Tengah (Jeda), Keluar */
+            animation: scrollCenterPause 10s infinite;
+        }
+        
+        /* MODIFIKASI 2 & 3: Animasi berhenti di tengah & Text Link */
+        @keyframes scrollCenterPause {
+            0% {
+                transform: translateY(200%); /* Mulai dari bawah jauh */
+                opacity: 0;
+            }
+            15% {
+                transform: translateY(-50%); /* Bergerak ke posisi tengah (karena container flex center, 0 adalah tengah visual, tapi karena absolute kita gunakan translateY offset) */
+                opacity: 1;
+            }
+            45% {
+                transform: translateY(-50%); /* Tetap di tengah (Berhenti sejenak) */
+                opacity: 1;
+            }
+            60% {
+                transform: translateY(-200%); /* Bergerak ke atas jauh */
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(-200%); /* Menunggu di luar layar */
+                opacity: 0;
+            }
+        }
+
+        /* Styling untuk Link di dalam Running Text */
+        .rt-content a {
+            color: #fff;
+            text-decoration: underline; /* Garis bawah agar jelas itu link */
+            text-underline-offset: 4px;
+            transition: color 0.3s;
+        }
+
+        .rt-content a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* --- QUICK LINKS (6 Gambar) --- */
+        .section-padding {
+            padding: 60px 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--secondary-color);
+            margin: 10px auto;
+        }
+
+        .quick-links-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .quick-link-item {
+            flex: 1 1 calc(16.666% - 15px); /* 6 item per baris */
+            min-width: 150px;
+            text-align: center;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .quick-link-item:hover {
+            transform: translateY(-5px);
+            border-bottom-color: var(--secondary-color);
+        }
+
+        .quick-link-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .quick-link-item h4 {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        /* --- MENU GAMBAR (4 Kesamping, 2 Deret) --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 200px);
+            gap: 15px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: #fff;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        /* --- KEGIATAN HARI INI (4 Kesamping) --- */
+        .activities-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .activity-card {
+            flex: 1 1 calc(25% - 20px);
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: var(--transition);
+            border: 1px solid #eee;
+        }
+
+        .activity-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .activity-img {
+            height: 160px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .activity-content {
+            padding: 20px;
+        }
+
+        .activity-date {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .activity-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .activity-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 50px 5% 20px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-section h3 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p, .footer-section ul li {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: #ddd;
+        }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .navbar-container {
+                position: relative;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                padding: 20px;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+                height: auto;
+                align-items: flex-start;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-item {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                height: auto;
+            }
+
+            .dropdown {
+                position: static;
+                visibility: visible;
+                opacity: 1;
+                transform: none;
+                box-shadow: none;
+                border-left: 3px solid var(--secondary-color);
+                display: none; 
+                padding-left: 20px;
+                width: 100%;
+            }
+            
+            .nav-item:hover .dropdown {
+                display: block;
+                position: static;
+                box-shadow: none;
+                border-top: none;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto;
+            }
+            
+            .quick-link-item {
+                flex: 1 1 calc(33.333% - 15px); 
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .hero-slider {
+                height: 300px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-link-item {
+                flex: 1 1 calc(50% - 15px);
+            }
+
+            .activity-card {
+                flex: 1 1 100%;
+            }
+            
+            /* Penyesuaian Logo di Mobile */
+            .logo {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="contact-info">
+            <span><i class="fab fa-whatsapp"></i> +62 87757476241</span>
+            <span><i class="fas fa-envelope"></i> smait-putri-abuhurairah-mataram.sch.id</span>
+        </div>
+        <div class="social-search">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fas fa-search"></i> Cari</a>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <!-- MODIFIKASI 1: Logo section -->
+            <a href="#" class="logo">
+              <!-- <i class="fas fa-graduation-cap"></i> -->
+              <img src="logo.png">
+                <h5>SMA IT Putri Abuhur Mataram</h5>
+            </a>
+            
+            <div class="menu-toggle" id="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+
+            <ul class="nav-menu" id="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Home</a>
+                </li>
+                
+                <!-- Profil Dropdown -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Profil <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown">
+                        <li><a href="#">Profil Sekolah</a></li>
+                        <li><a href="Profil Kepala Sekolah SMA IT Putri.html">Sambutan Kepala Sekolah</a></li>
+                        <li><a href="#">Visi Misi Sekolah</a></li>
+                        <li><a href="#">Fasilitas</a></li>
+                        <li><a href="Profil Guru.html">Profil Guru</a></li>
+                    </ul>
+                </li>
+
+                <!-- Program Unggulan Dropdown -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Program<i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown">
+                        <li><a href="#">Hafiz Al-Quran</a></li>
+                        <li><a href="#">Hafal Hadis Sohih</a></li>
+                        <li><a href="#">Bahasa Inggris</a></li>
+                        <li><a href="#">Bahasa Arab</a></li>
+                        <li><a href="#">Teknologi & Sains</a></li>
+                    </ul>
+                </li>
+
+                <!-- Pendaftaran Dropdown -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Pendaftaran <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown">
+                        <li><a href="Registrasi Masuk.html">Registrasi Masuk</a></li>
+                        <li><a href="Registrasi Online">Registrasi Online</a></li>
+                        <li><a href="#">Formulir Pendaftaran</a></li>
+                        <li><a href="#">Informasi Lebih Lanjut</a></li>
+                    </ul>
+                </li>
+
+                <!-- Orang Tua & Siswi Dropdown -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Ortu&Siswi <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown">
+                        <li><a href="Alumni SMA IT Putri.html">Alumni SMA IT Putri</a></li>
+                        <li><a href="#">Kuisioner Siswi</a></li>
+                        <li><a href="#">Kebijakan Sekolah</a></li>
+                        <li><a href="#">Kalender Akademik</a></li>
+                        <li><a href="No HP Org TUA.html">No HP Org TUA</a></li>
+                    </ul>
+                </li>
+
+                <!-- Otoritasi Dropdown -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Otoritasi <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown">
+                        <li><a href="#">ISO 9001 2015</a></li>
+                        <li><a href="#">Kebijakan Mutu</a></li>
+                        <li><a href="#">Akreditasi</a></li>
+                    </ul>
+                </li>
+
+                <!-- Surat Menyurat Dropdown -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Surat <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown">
+                        <li><a href="Login Surat masuk dan keluar.html">Login Surat Masuk & Keluar</a></li>
+                        <li><a href="#">Login Kelengkapan Berkas</a></li>
+                        <li><a href="#">Login Arsip Berkas Ijazah</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO SLIDER (10 IMAGES) -->
+    <div class="hero-slider" id="heroSlider">
+        <div class="slide active">
+            <img src="https://picsum.photos/seed/school1/1600/900" alt="Sekolah 1">
+            <div class="slide-content">
+                <h2>Fasilitas Internasional</h2>
+                <p>Mendukung pembelajaran modern dengan teknologi terkini.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="https://picsum.photos/seed/school2/1600/900" alt="Sekolah 2">
+            <div class="slide-content">
+                <h2>Lingkungan Belajar Kondusif</h2>
+                <p>Dirancang untuk kenyamanan dan konsentrasi siswa.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="https://picsum.photos/seed/school3/1600/900" alt="Sekolah 3">
+            <div class="slide-content">
+                <h2>Ekstrakurikuler Olahraga</h2>
+                <p>Mengembangkan fisik dan sportivitas siswa.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="https://picsum.photos/seed/library/1600/900" alt="Perpustakaan">
+            <div class="slide-content">
+                <h2>Perpustakaan Digital</h2>
+                <p>Ribuan koleksi buku dan akses jurnal internasional.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="https://picsum.photos/seed/lab/1600/900" alt="Laboratorium">
+            <div class="slide-content">
+                <h2>Laboratorium Sains</h2>
+                <p>Praktikum langsung dengan peralatan standar internasional.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="https://picsum.photos/seed/class/1600/900" alt="Kelas">
+            <div class="slide-content">
+                <h2>Kelas Interaktif</h2>
+                <p>Sistem smart classroom di setiap ruang belajar.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="https://picsum.photos/seed/art/1600/900" alt="Seni">
+            <div class="slide-content">
+                <h2>Seni & Budaya</h2>
+                <p>Menumbuhkan kreativitas dan cinta budaya.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="https://picsum.photos/seed/discuss/1600/900" alt="Diskusi">
+            <div class="slide-content">
+                <h2>Kurikulum Terintegrasi</h2>
+                <p>Memadukan kurikulum nasional dan internasional.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="https://picsum.photos/seed/computer/1600/900" alt="Komputer">
+            <div class="slide-content">
+                <h2>Komputerisasi Sekolah</h2>
+                <p>Pembelajaran berbasis digital (E-Learning).</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="https://picsum.photos/seed/mosque/1600/900" alt="Masjid">
+            <div class="slide-content">
+                <h2>Pembinaan Karakter</h2>
+                <p>Penanaman nilai-nilai agama dan budi pekerti.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RUNNING TEXT VERTIKAL -->
+    <div class="running-text-section">
+        <div class="rt-label">INFO TERKINI</div>
+        <div class="rt-container">
+            <!-- MODIFIKASI 2: Teks berjalan diubah menjadi Text Link -->
+            <div class="rt-content">
+                <a href="https://example.com/ppdb" target="_blank" title="Klik untuk info selengkapnya">
+                    <p>📢 Pendaftaran Peserta Didik Baru (PPDB) Tahun Ajaran 2026/2027 telah dibuka. Segera daftarkan putra-putri Anda.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK LINKS (6 LINKS) -->
+    <section class="section-padding">
+        <div class="section-title">Akses Cepat</div>
+        <div class="quick-links-grid">
+            <div class="quick-link-item">
+                <img src="https://picsum.photos/seed/daftar/100/100" alt="PPDB">
+                <h4>PPDB Online</h4>
+            </div>
+            <div class="quick-link-item">
+                <img src="https://picsum.photos/seed/nilai/100/100" alt="E-Rapor">
+                <h4>Cek Nilai</h4>
+            </div>
+            <div class="quick-link-item">
+                <img src="https://picsum.photos/seed/calendar/100/100" alt="Kalender">
+                <h4>Kalender Akademik</h4>
+            </div>
+            <div class="quick-link-item">
+                <img src="https://picsum.photos/seed/algumni/100/100" alt="Alumni">
+                <h4>Ikatan Alumni</h4>
+            </div>
+            <div class="quick-link-item">
+                <img src="https://picsum.photos/seed/library/100/100" alt="Perpus">
+                <h4>Perpustakaan</h4>
+            </div>
+            <div class="quick-link-item">
+                <img src="https://picsum.photos/seed/payment/100/100" alt="SPP">
+                <h4>Pembayaran SPP</h4>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALERI KEGIATAN (4 KE SAMPING, 2 KEBWAH) -->
+    <section class="section-padding" style="background-color: #fff;">
+        <div class="section-title">Galeri Sekolah</div>
+        <div class="gallery-grid">
+            <!-- Baris 1 -->
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/gal1/600/400" alt="Kegiatan 1">
+                <div class="gallery-overlay">
+                    <h4>Lomba Robotik</h4>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/gal2/600/400" alt="Kegiatan 2">
+                <div class="gallery-overlay">
+                    <h4>Kunjungan Studi</h4>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/gal3/600/400" alt="Kegiatan 3">
+                <div class="gallery-overlay">
+                    <h4>Upacara Bendera</h4>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/gal4/600/400" alt="Kegiatan 4">
+                <div class="gallery-overlay">
+                    <h4>Praktikum Kimia</h4>
+                </div>
+            </div>
+            <!-- Baris 2 -->
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/gal5/600/400" alt="Kegiatan 5">
+                <div class="gallery-overlay">
+                    <h4>Wisuda Tahfidz</h4>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/gal6/600/400" alt="Kegiatan 6">
+                <div class="gallery-overlay">
+                    <h4>Seminar Guru</h4>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/gal7/600/400" alt="Kegiatan 7">
+                <div class="gallery-overlay">
+                    <h4>Organisasi Siswa</h4>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/gal8/600/400" alt="Kegiatan 8">
+                <div class="gallery-overlay">
+                    <h4>Pentas Seni</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- KEGIATAN HARI INI (4 KE SAMPING) -->
+    <section class="section-padding">
+        <div class="section-title">Agenda Hari Ini</div>
+        <div class="activities-container">
+            <div class="activity-card">
+                <img src="https://picsum.photos/seed/act1/400/300" class="activity-img" alt="Kegiatan 1">
+                <div class="activity-content">
+                    <span class="activity-date">Senin, 08:00 - 10:00</span>
+                    <h4 class="activity-title">Evaluasi Semester Ganjil</h4>
+                    <p class="activity-desc">Rapat koordinasi evaluasi pembelajaran semester ganjil di aula utama.</p>
+                </div>
+            </div>
+            <div class="activity-card">
+                <img src="https://picsum.photos/seed/act2/400/300" class="activity-img" alt="Kegiatan 2">
+                <div class="activity-content">
+                    <span class="activity-date">Senin, 13:00 - 15:00</span>
+                    <h4 class="activity-title">Workshop Bahasa Arab</h4>
+                    <p class="activity-desc">Peningkatan kemampuan bahasa Arab untuk guru dan staf pengajar.</p>
+                </div>
+            </div>
+            <div class="activity-card">
+                <img src="https://picsum.photos/seed/act3/400/300" class="activity-img" alt="Kegiatan 3">
+                <div class="activity-content">
+                    <span class="activity-date">Senin, 15:30 - Selesai</span>
+                    <h4 class="activity-title">Latihan Basket U-17</h4>
+                    <p class="activity-desc">Persiapan tim basket sekolah untuk kompetisi tingkat provinsi.</p>
+                </div>
+            </div>
+            <div class="activity-card">
+                <img src="https://picsum.photos/seed/act4/400/300" class="activity-img" alt="Kegiatan 4">
+                <div class="activity-content">
+                    <span class="activity-date">Selasa, 07:30 - 09:00</span>
+                    <h4 class="activity-title">Senam Pagi Bersama</h4>
+                    <p class="activity-desc">Kegiatan rutin senam sehat untuk seluruh siswa dan guru.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Tentang Kami</h3>
+                <p>Sekolah SMA IT Putri Abuhurairah Mataram berkomitmen mencetak generasi yang berakhlak mulia, cerdas, dan kompetitif di kancah global dengan standar ISO 9001:2015.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Hubungi Kami</h3>
+                <p><i class="fas fa-map-marker-alt"></i>Jln. Majapahit No. 54 B Mataram</p>
+                <p><i class="fas fa-phone"></i> (0370) 087757476241</p>
+                <p><i class="fas fa-envelope"></i> admin@sekolah.sch.id</p>
+            </div>
+            <div class="footer-section">
+                <h3>Tautan Penting</h3>
+                <ul>
+                    <li><a href="#">Portal Akademik</a></li>
+                    <li><a href="#">E-Learning</a></li>
+                    <li><a href="#">Karir</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 SMA IT Putri Abuhurairah Mataram.
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // 1. Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu');
+        const navList = document.getElementById('nav-list');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+
+        // 2. Hero Slider Logic (10 Images)
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        const slideInterval = 4000; // Ganti gambar setiap 4 detik
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % totalSlides;
+            slides[currentSlide].classList.add('active');
+        }
+
+        setInterval(nextSlide, slideInterval);
+
+        // 3. Interaction Feedback (No native alerts)
+        const buttons = document.querySelectorAll('a, .quick-link-item, .gallery-item, .activity-card');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // Jika link hanya '#' (placeholder), mencegah loncat ke atas
+                if(this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    console.log('Menu diklik: ' + (this.innerText || 'Gambar/Galeri'));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

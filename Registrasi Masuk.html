@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Arsip Digital - Pro</title>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --bg-light: #f1f5f9;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --text-dark: #0f172a;
+            --sidebar-w: 280px;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); height: 100vh; overflow: hidden; }
+
+        /* --- UTILITIES --- */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .w-full { width: 100%; }
+        .cursor-pointer { cursor: pointer; }
+
+        /* --- BUTTONS --- */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.2s;
+            font-size: 0.875rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-outline { border: 1px solid var(--secondary); background: transparent; color: var(--secondary); }
+        .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
+
+        /* --- LOGIN VIEW --- */
+        #login-view {
+            width: 100vw; height: 100vh;
+            display: flex;
+        }
+        .login-left {
+            flex: 1;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+        .login-left img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: opacity 0.5s ease;
+        }
+        .login-right {
+            flex: 1;
+            display: flex; flex-direction: column; justify-content: center; padding: 3rem;
+            background: var(--white);
+            z-index: 10;
+        }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; }
+        .form-input {
+            width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.5rem;
+            outline: none; transition: 0.2s;
+        }
+        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+        /* --- DASHBOARD VIEW --- */
+        #dashboard-view { display: flex; height: 100vh; }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-w); background: #1e293b; color: white;
+            display: flex; flex-direction: column; overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-header {
+            padding: 1.5rem; border-bottom: 1px solid #334155;
+            display: flex; align-items: center; gap: 0.75rem;
+            font-size: 1.25rem; font-weight: bold; color: var(--primary);
+        }
+        .nav-menu { list-style: none; padding: 1rem 0.5rem; }
+        .nav-item { margin-bottom: 0.25rem; }
+        .nav-link {
+            padding: 0.75rem; border-radius: 0.375rem; display: flex; align-items: center; justify-content: space-between;
+            color: #94a3b8; text-decoration: none; cursor: pointer; transition: 0.2s;
+        }
+        .nav-link:hover, .nav-link.active { background: var(--primary); color: white; }
+        .nav-link-content { display: flex; align-items: center; gap: 0.75rem; }
+        
+        /* Submenu */
+        .submenu { list-style: none; padding-left: 0.5rem; max-height: 0; overflow: hidden; transition: 0.3s ease; }
+        .submenu.open { max-height: 1000px; }
+        .submenu-link {
+            padding: 0.5rem 1rem; color: #cbd5e1; text-decoration: none; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 0.5rem; cursor: pointer; border-radius: 0.375rem;
+        }
+        .submenu-link:hover, .submenu-link.active { background: #334155; color: white; }
+
+        /* Main Content */
+        .main-content { flex: 1; overflow-y: auto; padding: 2rem; background: var(--bg-light); position: relative; }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card {
+            background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary);
+        }
+        .stat-title { font-size: 0.9rem; color: var(--secondary); margin-bottom: 0.5rem; }
+        .stat-value { font-size: 1.5rem; font-weight: bold; }
+        .progress-bar-bg { height: 8px; background: #e2e8f0; border-radius: 4px; margin-top: 0.75rem; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; }
+
+        /* Backup/Restore Box */
+        .data-management-box {
+            background: white; padding: 2rem; border-radius: 0.75rem; box-shadow: var(--shadow);
+            margin-top: 2rem; border-top: 5px solid var(--warning);
+        }
+
+        /* Table */
+        .table-container { background: white; border-radius: 0.75rem; box-shadow: var(--shadow); overflow: hidden; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .data-table th { background: #f8fafc; font-weight: 600; color: var(--secondary); }
+        .preview-box {
+            width: 40px; height: 40px; border-radius: 4px; object-fit: cover;
+            background: #e2e8f0; cursor: pointer; border: 1px solid #cbd5e1;
+        }
+        .preview-pdf { color: var(--danger); font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+
+        /* --- REPORT VIEW (LANDSCAPE & PRINT) --- */
+        .report-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
+            background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: var(--shadow);
+        }
+        .landscape-container {
+            background: white; padding: 2rem; border-radius: 0.75rem; box-shadow: var(--shadow);
+            /* Simulasi kertas A4 Landscape di layar */
+            min-height: 600px; 
+        }
+        .report-title {
+            text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #000; padding-bottom: 1rem;
+        }
+        .report-table {
+            width: 100%; border-collapse: collapse; margin-top: 1rem;
+        }
+        .report-table th, .report-table td {
+            border: 1px solid #000; padding: 8px; text-align: center;
+        }
+        .report-table th { background: #f1f5f9; font-weight: bold; }
+        .status-badge {
+            padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;
+        }
+        .status-ok { background: #d1fae5; color: #065f46; }
+        .status-no { background: #fee2e2; color: #991b1b; }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+            z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box {
+            background: white; padding: 2rem; border-radius: 0.75rem; width: 90%; max-width: 500px;
+            transform: translateY(-20px); transition: 0.3s;
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-title { font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; }
+        
+        /* Image Zoom Modal */
+        .zoom-modal { max-width: 90vw; height: auto; background: transparent; box-shadow: none; }
+        .zoom-img { max-width: 100%; max-height: 90vh; border-radius: 0.5rem; }
+
+        /* Toast */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 200; }
+        .toast {
+            background: #333; color: white; padding: 1rem 1.5rem; border-radius: 0.5rem;
+            margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        /* --- PRINT STYLES (LANDSCAPE) --- */
+        @media print {
+            @page { size: landscape; margin: 1cm; }
+            body { background: white; height: auto; overflow: visible; }
+            .sidebar, .no-print, #login-view, .data-management-box, .stat-card { display: none !important; }
+            #dashboard-view { display: block; height: auto; }
+            .main-content { padding: 0; overflow: visible; }
+            .landscape-container { box-shadow: none; padding: 0; }
+            .report-header { display: none; } /* Sembunyikan tombol saat print */
+            .report-title { font-size: 18pt; }
+            .report-table th, .report-table td { border: 1px solid #000; font-size: 10pt; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #login-view { flex-direction: column; }
+            .login-left { height: 30vh; }
+            #dashboard-view { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; max-height: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NOTIFICATION -->
+    <div id="toast-container"></div>
+
+    <!-- VIEW 1: LOGIN -->
+    <div id="login-view">
+        <div class="login-left">
+            <img id="slider-img" src="https://picsum.photos/seed/office1/800/1200" alt="Slide">
+        </div>
+        <div class="login-right">
+            <h2 style="color: var(--primary); margin-bottom: 0.5rem;">Sistem Arsip Digital</h2>
+            <p style="color: var(--secondary); margin-bottom: 2rem;">Silakan login untuk mengelola kelengkapan berkas.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" class="form-input" placeholder="Masukkan username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Masukkan password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-full justify-center">
+                    <i class="ph ph-sign-in"></i> Masuk Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- VIEW 2: DASHBOARD -->
+    <div id="dashboard-view" class="hidden">
+        <!-- Sidebar -->
+        <nav class="sidebar no-print">
+            <div class="sidebar-header">
+                <i class="ph ph-files"></i> E-Arsip
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="switchView('home')">
+                        <div class="nav-link-content"><i class="ph ph-house"></i> Dashboard</div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleAccordion(this)">
+                        <div class="nav-link-content"><i class="ph ph-folder-open"></i> Input Berkas</div>
+                        <i class="ph ph-caret-down"></i>
+                    </a>
+                    <ul class="submenu" id="input-submenu">
+                        <!-- Generated by JS -->
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="toggleAccordion(this)">
+                        <div class="nav-link-content"><i class="ph ph-printer"></i> Laporan (Report)</div>
+                        <i class="ph ph-caret-down"></i>
+                    </a>
+                    <ul class="submenu" id="report-submenu">
+                        <!-- Generated by JS (2021-2026) -->
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Home: Stats & Backup/Restore -->
+            <div id="view-home">
+                <div class="flex justify-between items-center" style="margin-bottom: 1.5rem;">
+                    <h2>Dashboard Kelengkapan Berkas</h2>
+                    <div class="text-right">
+                        <span id="current-date" style="color: var(--secondary); font-size: 0.9rem;"></span>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" id="stats-container">
+                    <!-- Cards Generated by JS -->
+                </div>
+
+                <!-- DATA MANAGEMENT (BACKUP/RESTORE) -->
+                <div class="data-management-box">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);"><i class="ph ph-database"></i> Manajemen Penyimpanan Data</h3>
+                    <p style="color: var(--secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                        Data tersimpan otomatis di browser (Local Storage). Gunakan opsi di bawah untuk Backup ke file komputer (JSON) atau Restore dari file backup.
+                    </p>
+                    <div class="flex gap-4">
+                        <button class="btn btn-success" onclick="downloadBackup()">
+                            <i class="ph ph-download-simple"></i> Backup Data (JSON)
+                        </button>
+                        <button class="btn btn-warning" onclick="document.getElementById('restore-input').click()">
+                            <i class="ph ph-upload-simple"></i> Restore Data (JSON)
+                        </button>
+                        <input type="file" id="restore-input" accept=".json" class="hidden" onchange="processRestore(this)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input View: Table -->
+            <div id="view-input" class="hidden">
+                <div class="flex justify-between items-center" style="margin-bottom: 1.5rem;">
+                    <h2 id="input-year-title">Input Berkas Tahun 2021</h2>
+                    <button class="btn btn-primary" onclick="openUploadModal()">
+                        <i class="ph ph-upload-simple"></i> Upload Berkas Baru
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="50">No</th>
+                                <th>Jenis Berkas</th>
+                                <th>Preview</th>
+                                <th>Tanggal Upload</th>
+                                <th width="200">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="file-table-body">
+                            <!-- Rows Generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Report View: Landscape Printable -->
+            <div id="view-report" class="hidden">
+                <div class="report-header no-print">
+                    <div>
+                        <h2 id="report-title-display">Laporan Arsip 2021</h2>
+                        <p style="color: var(--secondary); font-size: 0.9rem;">Tampilan siap cetak format Landscape</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="window.print()">
+                        <i class="ph ph-printer"></i> Print Laporan
+                    </button>
+                </div>
+
+                <div class="landscape-container">
+                    <div class="report-title">
+                        <h3>LAPORAN KELENGKAPAN BERKAS DIGITAL</h3>
+                        <h4 id="report-subtitle">PERIODE TAHUN 2021</h4>
+                    </div>
+                    
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">No</th>
+                                <th width="40%">Nama Dokumen / Jenis Berkas</th>
+                                <th width="20%">Nama File</th>
+                                <th width="20%">Tanggal Upload</th>
+                                <th width="15%">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-table-body">
+                            <!-- Report Rows -->
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 3rem; display: flex; justify-content: space-between; padding: 0 2rem;">
+                        <div style="text-align: center;">
+                            <p>Mengetahui,</p>
+                            <br><br><br>
+                            <p><strong>Admin Arsip</strong></p>
+                        </div>
+                        <div style="text-align: center;">
+                            <p>Tanggal Cetak: <span id="print-date"></span></p>
+                            <br><br><br>
+                            <p><strong>Pemilik Data</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: UPLOAD/EDIT -->
+    <div class="modal-overlay" id="upload-modal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modal-title">Upload Berkas</h3>
+            <div class="form-group">
+                <label>Jenis Berkas</label>
+                <select id="upload-type" class="form-input" style="margin-bottom: 1rem;">
+                    <option value="Formulir Pendaftaran">Formulir Pendaftaran</option>
+                    <option value="KTP">KTP</option>
+                    <option value="KK">KK</option>
+                    <option value="Ijazah">Ijazah</option>
+                    <option value="Pas Foto">Pas Foto</option>
+                </select>
+                <label>Pilih File (PDF/Gambar)</label>
+                <input type="file" id="file-input" class="form-input" accept=".pdf,image/*">
+                <p style="font-size: 0.8rem; color: var(--secondary); margin-top: 5px;">File akan disimpan ke Local Storage & Google Drive Folder Terkait.</p>
+            </div>
+            <div class="flex justify-between">
+                <button class="btn btn-outline" onclick="closeModal('upload-modal')">Batal</button>
+                <button class="btn btn-primary" onclick="processUpload()">Simpan & Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ZOOM IMAGE -->
+    <div class="modal-overlay" id="zoom-modal" onclick="closeModal('zoom-modal')">
+        <img id="zoomed-image" class="zoom-img" src="" alt="Zoom">
+    </div>
+
+    <script>
+        // --- KONFIGURASI DATA ---
+        const DRIVE_URLS = {
+            2021: "https://drive.google.com/drive/folders/1Yv7388UmV0KAm7V2eJb-siyq3zAJ4P84?usp=sharing",
+            2022: "https://drive.google.com/drive/folders/1vXmV0TVZ6mZQMoNMwpGhwmSKDqbiXn-0?usp=sharing",
+            2023: "https://drive.google.com/drive/folders/1S01kPLECWOKPGSKMeh9J2_dA33FUy3wn?usp=sharing",
+            2024: "https://drive.google.com/drive/folders/1HWcRM4hhcx5qDVsDMfCTG2p5zPC855EZ?usp=sharing",
+            2025: "https://drive.google.com/drive/folders/1dp6OHcqHv_5S83QyCnfTSLxPYdhG40wi?usp=sharing",
+            2026: "https://drive.google.com/drive/folders/1bX42axKUNoDZwPJx3vvzZ49sYVxgKEu-?usp=sharing"
+        };
+        // Tahun yang tersedia untuk laporan
+        const REPORT_YEARS = [2021, 2022, 2023, 2024, 2025, 2026];
+
+        const DOC_TYPES = ["Formulir Pendaftaran", "KTP", "KK", "Ijazah", "Pas Foto"];
+        const STORAGE_KEY = 'arsip_data_db_v1'; // Key untuk LocalStorage
+        
+        // State Data (Database Utama)
+        let dbData = {}; 
+        let currentYear = null; // Menyimpan tahun yang sedang aktif di view
+        let editingDocType = null;
+
+        // --- LOGIN LOGIC ---
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+
+            if (u === 'ijazah' && p === '2026ijazah') {
+                showToast('Login Berhasil!', 'success');
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('dashboard-view').classList.remove('hidden');
+                initDashboard();
+            } else {
+                showToast('Username atau Password salah!', 'error');
+            }
+        });
+
+        // --- SLIDER GAMBAR ---
+        const images = [
+            "https://picsum.photos/seed/edu1/800/1200",
+            "https://picsum.photos/seed/arch2/800/1200",
+            "https://picsum.photos/seed/tech3/800/1200"
+        ];
+        let imgIdx = 0;
+        setInterval(() => {
+            imgIdx = (imgIdx + 1) % images.length;
+            const imgEl = document.getElementById('slider-img');
+            imgEl.style.opacity = 0;
+            setTimeout(() => { imgEl.src = images[imgIdx]; imgEl.style.opacity = 0.7; }, 500);
+        }, 4000);
+
+        // --- DATA PERSISTENCE (LOCAL STORAGE) ---
+        function saveToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(dbData));
+                console.log("Data tersimpan ke LocalStorage");
+            } catch (e) {
+                showToast('Kuota penyimpanan penuh!', 'error');
+            }
+        }
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    dbData = JSON.parse(saved);
+                    console.log("Data dimuat dari LocalStorage");
+                } catch (e) {
+                    console.error("Gagal memuat data", e);
+                    dbData = {};
+                }
+            }
+        }
+
+        // --- BACKUP & RESTORE JSON ---
+        function downloadBackup() {
+            const dataStr = JSON.stringify(dbData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_arsip_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('Backup berhasil didownload', 'success');
+        }
+
+        function processRestore(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const restoredData = JSON.parse(e.target.result);
+                    if (confirm("Data yang ada akan ditimpa dengan data backup. Lanjutkan?")) {
+                        dbData = restoredData;
+                        saveToStorage();
+                        initDashboard(); // Refresh UI
+                        showToast('Data berhasil dipulihkan (Restore)!', 'success');
+                    }
+                } catch (err) {
+                    showToast('Format file JSON tidak valid!', 'error');
+                }
+                input.value = ""; // Reset input
+            };
+            reader.readAsText(file);
+        }
+
+        // --- DASHBOARD INITIALIZATION ---
+        function initDashboard() {
+            // Load data first
+            loadFromStorage();
+
+            // Set Tanggal
+            const now = new Date();
+            document.getElementById('current-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('print-date').innerText = now.toLocaleDateString('id-ID');
+
+            // Generate Input Menu (Kelengkapan Berkas)
+            const inputSubMenu = document.getElementById('input-submenu');
+            inputSubMenu.innerHTML = '';
+            Object.keys(DRIVE_URLS).forEach(year => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <a class="submenu-link" onclick="openInputView('${year}')">
+                        <i class="ph ph-calendar-blank"></i> Input Tahun ${year}
+                    </a>`;
+                inputSubMenu.appendChild(li);
+            });
+
+            // Generate Report Menu (Laporan)
+            const reportSubMenu = document.getElementById('report-submenu');
+            reportSubMenu.innerHTML = '';
+            REPORT_YEARS.forEach(year => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <a class="submenu-link" onclick="openReportView('${year}')">
+                        <i class="ph ph-file-text"></i> Laporan Tahun ${year}
+                    </a>`;
+                reportSubMenu.appendChild(li);
+            });
+            
+            renderStats();
+        }
+
+        function toggleAccordion(el) {
+            const submenu = el.nextElementSibling;
+            const icon = el.querySelector('.ph-caret-down');
+            if (submenu.classList.contains('open')) {
+                submenu.classList.remove('open');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                submenu.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function switchView(viewName) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-input').classList.add('hidden');
+            document.getElementById('view-report').classList.add('hidden');
+            
+            // Reset active sidebar classes
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.submenu-link').forEach(l => l.classList.remove('active'));
+            
+            if (viewName === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+                document.querySelector('.nav-link[onclick="switchView(\'home\')"]').classList.add('active');
+                renderStats();
+            } else if (viewName === 'input') {
+                document.getElementById('view-input').classList.remove('hidden');
+            } else if (viewName === 'report') {
+                document.getElementById('view-report').classList.remove('hidden');
+            }
+        }
+
+        // --- HOME: STATISTIK ---
+        function renderStats() {
+            const container = document.getElementById('stats-container');
+            container.innerHTML = '';
+
+            REPORT_YEARS.forEach(year => {
+                const yearData = dbData[year] || {};
+                const count = Object.keys(yearData).length;
+                const total = DOC_TYPES.length;
+                const percent = (count / total) * 100;
+                const colorClass = percent === 100 ? 'var(--success)' : (percent > 0 ? 'var(--warning)' : '#94a3b8');
+
+                const card = document.createElement('div');
+                card.className = 'stat-card';
+                card.style.borderLeftColor = colorClass;
+                card.innerHTML = `
+                    <div class="stat-title">Kelengkapan Tahun ${year}</div>
+                    <div class="flex justify-between items-end">
+                        <span class="stat-value">${count}/${total}</span>
+                        <span style="font-size:0.8rem; color: ${colorClass}">${Math.round(percent)}% Lengkap</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: ${percent}%; background-color: ${colorClass}"></div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-sm btn-outline w-full" onclick="openInputView('${year}')">Edit Data</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- INPUT VIEW: TABEL BERKAS ---
+        function openInputView(year) {
+            currentYear = year;
+            document.getElementById('input-year-title').textContent = `Input Berkas Tahun ${year}`;
+            switchView('input');
+            renderTable();
+            
+            // Highlight sidebar logic
+            document.querySelectorAll('.submenu-link').forEach(l => l.classList.remove('active'));
+            // Find the link clicked (approximation for simplicity)
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('file-table-body');
+            tbody.innerHTML = '';
+            
+            const yearData = dbData[currentYear] || {};
+
+            DOC_TYPES.forEach((doc, index) => {
+                const data = yearData[doc];
+                const tr = document.createElement('tr');
+                
+                if (data) {
+                    const isImg = data.type.startsWith('image');
+                    const previewHtml = isImg 
+                        ? `<img src="${data.file}" class="preview-box" onclick="zoomImage('${data.file}')">`
+                        : `<div class="preview-pdf" onclick="window.open('${DRIVE_URLS[currentYear]}')"><i class="ph ph-file-pdf"></i> PDF</div>`;
+
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td><strong>${doc}</strong><br><span style="font-size:0.8rem; color:#64748b">${data.name}</span></td>
+                        <td>${previewHtml}</td>
+                        <td>${data.date}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editFile('${doc}')"><i class="ph ph-pencil"></i> Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteFile('${doc}')"><i class="ph ph-trash"></i> Hapus</button>
+                        </td>
+                    `;
+                } else {
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${doc}</td>
+                        <td><span style="color:#cbd5e1; font-style:italic;">Belum ada</span></td>
+                        <td>-</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="prepareUpload('${doc}')"><i class="ph ph-upload"></i> Upload</button>
+                        </td>
+                    `;
+                }
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- REPORT VIEW: LAPORAN ---
+        function openReportView(year) {
+            currentYear = year;
+            document.getElementById('report-title-display').textContent = `Laporan Arsip Tahun ${year}`;
+            document.getElementById('report-subtitle').textContent = `PERIODE TAHUN ${year}`;
+            switchView('report');
+            renderReportTable();
+        }
+
+        function renderReportTable() {
+            const tbody = document.getElementById('report-table-body');
+            tbody.innerHTML = '';
+            
+            const yearData = dbData[currentYear] || {};
+
+            DOC_TYPES.forEach((doc, index) => {
+                const data = yearData[doc];
+                const tr = document.createElement('tr');
+                
+                if (data) {
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td style="text-align: left;">${doc}</td>
+                        <td>${data.name}</td>
+                        <td>${data.date}</td>
+                        <td><span class="status-badge status-ok">TERSEDIA</span></td>
+                    `;
+                } else {
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td style="text-align: left;">${doc}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td><span class="status-badge status-no">BELUM DIUPLOAD</span></td>
+                    `;
+                }
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- FILE OPERATIONS ---
+        function prepareUpload(docType) {
+            editingDocType = null;
+            document.getElementById('modal-title').textContent = "Upload Berkas";
+            document.getElementById('upload-type').value = docType;
+            document.getElementById('file-input').value = ""; 
+            document.getElementById('upload-modal').classList.add('active');
+        }
+
+        function openUploadModal() {
+            prepareUpload(DOC_TYPES[0]); 
+        }
+
+        function editFile(docType) {
+            editingDocType = docType;
+            document.getElementById('modal-title').textContent = "Edit / Upload Ulang";
+            document.getElementById('upload-type').value = docType;
+            document.getElementById('file-input').value = "";
+            document.getElementById('upload-modal').classList.add('active');
+        }
+
+        function deleteFile(docType) {
+            if(confirm(`Hapus data ${docType} Tahun ${currentYear}?`)) {
+                delete dbData[currentYear][docType];
+                saveToStorage(); // Simpan perubahan
+                renderTable();
+                showToast('Berkas dihapus', 'info');
+            }
+        }
+
+        function processUpload() {
+            const type = document.getElementById('upload-type').value;
+            const fileInput = document.getElementById('file-input');
+            
+            if (fileInput.files.length === 0) {
+                showToast('Pilih file terlebih dahulu!', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            const btn = document.querySelector('#upload-modal .btn-primary');
+            const originalText = btn.innerText;
+            btn.innerText = "Mengupload...";
+            btn.disabled = true;
+
+            reader.onload = function(e) {
+                setTimeout(() => {
+                    if (!dbData[currentYear]) dbData[currentYear] = {};
+                    
+                    dbData[currentYear][type] = {
+                        file: e.target.result, 
+                        name: file.name,
+                        date: new Date().toLocaleDateString('id-ID'),
+                        type: file.type
+                    };
+
+                    saveToStorage(); // SIMPAN KE JSON PERMANEN
+
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    closeModal('upload-modal');
+                    renderTable();
+                    
+                    showToast('Berkas tersimpan permanen!', 'success');
+                    setTimeout(() => {
+                        window.open(DRIVE_URLS[currentYear], '_blank');
+                    }, 1000);
+
+                }, 1000); 
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // --- MODAL & UTILS ---
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function zoomImage(src) {
+            document.getElementById('zoomed-image').src = src;
+            document.getElementById('zoom-modal').classList.add('active');
+        }
+
+        function showToast(msg, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast`;
+            if (type === 'success') toast.style.borderLeft = '5px solid #10b981';
+            if (type === 'error') toast.style.borderLeft = '5px solid #ef4444';
+            
+            let icon = type === 'success' ? 'check-circle' : (type === 'error' ? 'warning-circle' : 'info');
+            
+            toast.innerHTML = `<i class="ph ph-${icon}" style="font-size:1.2rem"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

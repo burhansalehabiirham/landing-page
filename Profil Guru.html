@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Guru & Portal Sekolah</title>
+    <!-- Menggunakan Font dari Google Fonts untuk tampilan elegan -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Menggunakan Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary-color: #0f172a; /* Navy Blue Gelap */
+            --accent-color: #c0a062;  /* Emas Elegan */
+            --text-dark: #333333;
+            --text-light: #f8f9fa;
+            --bg-light: #f4f6f8;
+            --white: #ffffff;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-color);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .nav-item {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            font-weight: 500;
+            padding: 10px 15px;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        /* Dropdown Styles */
+        .dropdown-menu {
+            position: absolute;
+            top: 80px;
+            left: 0;
+            background-color: var(--white);
+            min-width: 250px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+            border-top: 3px solid var(--accent-color);
+        }
+
+        /* Sub Dropdown (Level 2) */
+        .dropdown-submenu {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            background-color: var(--white);
+            min-width: 220px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(10px);
+            transition: var(--transition);
+            border-top: 3px solid var(--accent-color);
+        }
+
+        .nav-item:hover > .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .has-submenu:hover > .dropdown-submenu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-dark);
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-light);
+            color: var(--accent-color);
+            padding-left: 25px; /* Efek geser */
+        }
+
+        /* Search Bar */
+        .search-box {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .search-box input {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-family: inherit;
+            width: 200px;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            width: 250px;
+        }
+
+        .search-box button {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        /* --- HERO SLIDER --- */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide-content {
+            text-align: center;
+            color: var(--white);
+            background: rgba(15, 23, 42, 0.7);
+            padding: 40px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .slide-content h2 {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .slider-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background-color: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dot.active {
+            background-color: var(--accent-color);
+            transform: scale(1.2);
+        }
+
+        /* --- ELEGANT GALLERY SECTION --- */
+        .gallery-section {
+            padding: 80px 5%;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 15px auto 0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            height: 300px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px;
+            color: var(--white);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- INFO BOARDS (DASHBOARDS) --- */
+        .boards-section {
+            padding: 60px 5%;
+            background-color: var(--white);
+        }
+
+        .boards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .board-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            transition: var(--transition);
+        }
+
+        .board-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-color: var(--accent-color);
+        }
+
+        .board-header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .board-header i {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .board-header h3 {
+            color: var(--white);
+            font-size: 1.4rem;
+            margin: 0;
+        }
+
+        .board-content {
+            padding: 25px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(192, 160, 98, 0.1);
+            color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .list-info h4 {
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 2px;
+        }
+
+        .list-info p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 70px 5% 30px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-col h3 {
+            color: var(--accent-color);
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .footer-col p {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            transition: var(--transition);
+            color: var(--white);
+        }
+
+        .social-links a:hover {
+            background-color: var(--accent-color);
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            transition: var(--transition);
+            display: block;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+            padding-left: 5px;
+        }
+
+        .contact-info li {
+            display: flex;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .contact-info i {
+            color: var(--accent-color);
+            margin-right: 15px;
+            margin-top: 5px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 30px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .navbar {
+                height: auto;
+                flex-direction: column;
+                padding: 20px;
+            }
+            .nav-menu {
+                flex-direction: column;
+                width: 100%;
+                display: none; /* Hide for mobile initially, usually toggle with JS */
+                margin-top: 20px;
+                gap: 0;
+            }
+            .nav-menu.active {
+                display: block;
+            }
+            .nav-item {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .dropdown-menu {
+                position: static;
+                visibility: visible;
+                opacity: 1;
+                box-shadow: none;
+                background-color: #f8f9fa;
+                width: 100%;
+                display: none; /* JS Toggle needed for better mobile UX, keeping simple for static */
+                transform: none;
+                border-left: 3px solid var(--accent-color);
+                border-top: none;
+            }
+            .nav-item:hover .dropdown-menu {
+                display: block;
+            }
+            .dropdown-submenu {
+                position: static;
+                visibility: visible;
+                opacity: 1;
+                box-shadow: none;
+                background-color: #eee;
+                transform: none;
+                display: none;
+            }
+            .has-submenu:hover .dropdown-submenu {
+                display: block;
+            }
+            .search-box {
+                width: 100%;
+                margin: 20px 0 0;
+            }
+            .search-box input {
+                width: 100%;
+            }
+            .search-box input:focus {
+                width: 100%;
+            }
+            .mobile-toggle {
+                display: block;
+                position: absolute;
+                right: 20px;
+                top: 25px;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+        }
+
+        @media (min-width: 993px) {
+            .mobile-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">Edu<span style="color:white">Profil</span></div>
+            
+            <div class="mobile-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <!-- Home -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Home</a>
+                </li>
+
+                <!-- Tentang Guru (Dropdown) -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Tentang Guru <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 5px;"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item"><strong>Guru Umum</strong></a>
+                        <a href="#" class="dropdown-item">Guru Matematika</a>
+                        <a href="#" class="dropdown-item">Guru IPA</a>
+                        <a href="#" class="dropdown-item">Guru IPS</a>
+                        <a href="#" class="dropdown-item">Guru Biologi</a>
+                        <a href="#" class="dropdown-item">Guru Geografi</a>
+                        <a href="#" class="dropdown-item">Guru Bahasa Inggris</a>
+                        
+                        <!-- Sub-dropdown Agama -->
+                        <div class="nav-item has-submenu">
+                            <a href="#" class="dropdown-item">Guru Agama <i class="fas fa-chevron-right" style="float:right; font-size: 0.7em;"></i></a>
+                            <div class="dropdown-submenu">
+                                <a href="#" class="dropdown-item">Guru Bahasa Arab</a>
+                                <a href="#" class="dropdown-item">Guru Akidah</a>
+                                <a href="#" class="dropdown-item">Guru Alqur'an</a>
+                                <a href="#" class="dropdown-item">Guru Al-Hadis</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Kegiatan Sekolah (Dropdown) -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Kegiatan Sekolah <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 5px;"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">Jadwal Pelajaran</a>
+                        <a href="#" class="dropdown-item">Jadwal Eskul</a>
+                        
+                        <!-- Sub-dropdown Kalender -->
+                        <div class="nav-item has-submenu">
+                            <a href="#" class="dropdown-item">Kalender Akademik <i class="fas fa-chevron-right" style="float:right; font-size: 0.7em;"></i></a>
+                            <div class="dropdown-submenu">
+                                <a href="#" class="dropdown-item">Kalender Akademik</a>
+                                <a href="#" class="dropdown-item">Kalender ISO</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Kontak -->
+                <li class="nav-item">
+                    <a href="#footer" class="nav-link">Kontak</a>
+                </li>
+
+                <!-- Pencarian -->
+                <li class="nav-item">
+                    <div class="search-box">
+                        <input type="text" placeholder="Cari Guru atau Info...">
+                        <button><i class="fas fa-search"></i></button>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Slider Section -->
+    <section class="slider-container">
+        <!-- Slides generated using JS to ensure 10 slides, but here is the HTML structure -->
+        <div class="slide active" style="background-image: url('https://picsum.photos/seed/slide1/1600/600');">
+            <div class="slide-content">
+                <h2>Selamat Datang</h2>
+                <p>Portal Profil Guru Terpadu</p>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('https://picsum.photos/seed/slide2/1600/600');">
+            <div class="slide-content">
+                <h2>Prestasi Guru</h2>
+                <p>Dedikasi untuk Pendidikan Indonesia</p>
+            </div>
+        </div>
+        <!-- Placeholder for slides 3-10 created by logic -->
+        <div class="slider-controls" id="sliderDots">
+            <!-- Dots generated by JS -->
+        </div>
+    </section>
+
+    <!-- Elegant Gallery Section (6 Images) -->
+    <section class="gallery-section">
+        <h2 class="section-title">Galeri Sekolah</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/guru1/400/300" alt="Galeri 1">
+                <div class="gallery-overlay">
+                    <h4>Suasana Kelas</h4>
+                    <p>Pembelajaran interaktif</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/guru2/400/300" alt="Galeri 2">
+                <div class="gallery-overlay">
+                    <h4>Laboratorium IPA</h4>
+                    <p>Praktikum siswa</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/guru3/400/300" alt="Galeri 3">
+                <div class="gallery-overlay">
+                    <h4>Perpustakaan</h4>
+                    <p>Literasi dan bacaan</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/guru4/400/300" alt="Galeri 4">
+                <div class="gallery-overlay">
+                    <h4>Kegiatan Olahraga</h4>
+                    <p>Jasmani dan kesehatan</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/guru5/400/300" alt="Galeri 5">
+                <div class="gallery-overlay">
+                    <h4>Seni Budaya</h4>
+                    <p>Melestarikan budaya</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://picsum.photos/seed/guru6/400/300" alt="Galeri 6">
+                <div class="gallery-overlay">
+                    <h4>Rapat Guru</h4>
+                    <p>Koordinasi staf pengajar</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Papan Informasi Section -->
+    <section class="boards-section">
+        <h2 class="section-title" style="display:block; text-align:center;">Papan Informasi Sekolah</h2>
+        <div class="boards-container">
+            
+            <!-- Papan Jadwal Guru -->
+            <div class="board-card">
+                <div class="board-header">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <h3>Jadwal Guru</h3>
+                </div>
+                <div class="board-content">
+                    <div class="list-item">
+                        <div class="list-icon"><i class="fas fa-clock"></i></div>
+                        <div class="list-info">
+                            <h4>Bpk. Ahmad (Matematika)</h4>
+                            <p>Senin - Kamis, 07:00 - 12:00</p>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-icon"><i class="fas fa-clock"></i></div>
+                        <div class="list-info">
+                            <h4>Ibu Sarah (Bahasa Inggris)</h4>
+                            <p>Senin - Rabu, 08:30 - 14:00</p>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-icon"><i class="fas fa-clock"></i></div>
+                        <div class="list-info">
+                            <h4>Ust. Budi (Agama)</h4>
+                            <p>Jumat, 07:30 - 10:30</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Papan Kegiatan -->
+            <div class="board-card">
+                <div class="board-header">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Kegiatan</h3>
+                </div>
+                <div class="board-content">
+                    <div class="list-item">
+                        <div class="list-icon"><i class="fas fa-bullhorn"></i></div>
+                        <div class="list-info">
+                            <h4>Upacara Bendera</h4>
+                            <p>Senin, 17 Oktober 2023</p>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-icon"><i class="fas fa-trophy"></i></div>
+                        <div class="list-info">
+                            <h4>Lomba Cerdas Cermat</h4>
+                            <p>Rabu, 19 Oktober 2023</p>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-icon"><i class="fas fa-pray"></i></div>
+                        <div class="list-info">
+                            <h4>Jumat Keagamaan</h4>
+                            <p>Jumat, 21 Oktober 2023</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Papan Informasi -->
+            <div class="board-card">
+                <div class="board-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>Informasi</h3>
+                </div>
+                <div class="board-content">
+                    <div class="list-item">
+                        <div class="list-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="list-info">
+                            <h4>Libur Nasional</h4>
+                            <p>28 Oktober 2023 (Hari Sumpah Pemuda)</p>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-icon"><i class="fas fa-file-invoice"></i></div>
+                        <div class="list-info">
+                            <h4>Pengumuman Rapor</h4>
+                            <p>20 Desember 2023</p>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-icon"><i class="fas fa-user-plus"></i></div>
+                        <div class="list-info">
+                            <h4>Pendaftaran Eskul</h4>
+                            <p>Diperpanjang hingga akhir bulan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <!-- Kolom 1: Tentang -->
+            <div class="footer-col">
+                <h3>Profil Sekolah</h3>
+                <p>Membangun generasi cerdas, berkarakter, dan berakhlak mulia dengan bimbingan tenaga pengajar profesional dan berdedikasi tinggi.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <!-- Kolom 2: Link Cepat -->
+            <div class="footer-col">
+                <h3>Tautan Penting</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Guru Umum</a></li>
+                    <li><a href="#">Kalender Akademik</a></li>
+                    <li><a href="#">Jadwal Pelajaran</a></li>
+                    <li><a href="#">Eskul Siswa</a></li>
+                    <li><a href="#">Pendaftaran Siswa Baru</a></li>
+                </ul>
+            </div>
+
+            <!-- Kolom 3: Kontak -->
+            <div class="footer-col">
+                <h3>Hubungi Kami</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fab fa-whatsapp"></i>
+                        <span>+62 812 3456 7890 (Tata Usaha)</span>
+                    </li>
+                    <li>
+                        <i class="far fa-envelope"></i>
+                        <span>info@sekolahkita.sch.id</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Jl. Pendidikan No. 123, Jakarta, Indonesia</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <span>(021) 1234-5678</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2023 Sekolah Kita. All Rights Reserved. Designed by AI Assistant.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Script untuk Slider 1 s/d 10 ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const sliderContainer = document.querySelector('.slider-container');
+            const dotsContainer = document.getElementById('sliderDots');
+            const totalSlides = 10;
+            let currentSlide = 0;
+            const slides = [];
+
+            // Buat Slide dan Dots secara dinamis agar sesuai request (Slider 1-10)
+            for (let i = 0; i < totalSlides; i++) {
+                // Membuat elemen slide baru (kecuali slide 1 & 2 yang sudah ada di HTML untuk struktur awal)
+                if (i >= 2) {
+                    const slideDiv = document.createElement('div');
+                    slideDiv.classList.add('slide');
+                    // Gunakan gambar acak yang berbeda
+                    slideDiv.style.backgroundImage = `url('https://picsum.photos/seed/slide${i+1}/1600/600')`;
+                    
+                    const content = document.createElement('div');
+                    content.classList.add('slide-content');
+                    content.innerHTML = `<h2>Slider ${i + 1}</h2><p>Aktivitas & Fasilitas Sekolah</p>`;
+                    
+                    slideDiv.appendChild(content);
+                    sliderContainer.insertBefore(slideDiv, dotsContainer);
+                }
+                
+                // Kumpulkan semua slide DOM termasuk yang manual
+                slides.push(document.querySelectorAll('.slide')[i]);
+
+                // Buat Dots
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(i));
+                dotsContainer.appendChild(dot);
+            }
+
+            // Update DOM slides list setelah penambahan dinamis (untuk memastikan urutan benar)
+            const allSlides = document.querySelectorAll('.slide');
+            const allDots = document.querySelectorAll('.dot');
+
+            function showSlide(index) {
+                // Reset semua slide dan dots
+                allSlides.forEach(slide => slide.classList.remove('active'));
+                allDots.forEach(dot => dot.classList.remove('active'));
+
+                // Set aktif yang baru
+                allSlides[index].classList.add('active');
+                allDots[index].classList.add('active');
+                currentSlide = index;
+            }
+
+            function nextSlide() {
+                let next = (currentSlide + 1) % totalSlides;
+                showSlide(next);
+            }
+
+            function goToSlide(index) {
+                showSlide(index);
+            }
+
+            // Auto play slider setiap 4 detik
+            setInterval(nextSlide, 4000);
+        });
+
+        // --- Script untuk Menu Mobile ---
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

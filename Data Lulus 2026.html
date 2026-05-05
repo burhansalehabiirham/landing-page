@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Data Kelulusan - SMA IT Putri Abu Hurairah</title>
+    
+    <!-- Font & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- RESET & VARIABLES --- */
+        :root {
+            --primary-color: #1a252f; /* Dark Navy Blue */
+            --primary-light: #2c3e50;
+            --accent-color: #C5A028; /* Premium Gold */
+            --accent-hover: #b08d22;
+            --success: #27ae60;
+            --excel-color: #107c41; 
+            --danger: #c0392b;
+            --info: #2980b9;
+            --bg-dashboard: #f4f6f9;
+            --sidebar-width: 260px;
+            --gold-dark: #8a6e15;
+            --gold-light: #F9E79F;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; margin: 0; padding: 0; background: #fff; }
+
+        /* --- TOAST NOTIFICATION --- */
+        #toast-container {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .toast {
+            background: white; padding: 15px 20px; border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 10px;
+            border-left: 5px solid var(--primary-color); transform: translateX(120%); transition: transform 0.3s ease;
+            min-width: 300px;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast i { font-size: 1.2rem; }
+        .toast.success i { color: var(--success); }
+        .toast.error i { color: var(--danger); }
+
+        /* --- LAYOUT CONTROLLER --- */
+        .app-landing-mode {
+            background: url('https://picsum.photos/seed/islamic/1920/1080') no-repeat center center fixed;
+            background-size: cover;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            width: 100%;
+            height: 100vh; 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-landing-mode::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(26, 37, 47, 0.92), rgba(26, 37, 47, 0.8));
+            backdrop-filter: blur(3px); z-index: 1;
+        }
+
+        .app-dashboard-mode {
+            background: var(--bg-dashboard); min-height: 100vh; display: flex; overflow: hidden;
+        }
+
+        /* --- LANDING PAGE COMPONENTS --- */
+        .landing-card {
+            position: relative; z-index: 10; background: rgba(255, 255, 255, 0.96);
+            padding: 50px 40px; border-radius: 24px; box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            text-align: center; max-width: 450px; width: 90%; border-top: 6px solid var(--accent-color);
+            animation: fadeInUp 1s ease-out; margin: 0;
+        }
+        
+        .landing-logo {
+            width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent-color);
+            object-fit: cover; margin: 0 auto 25px auto; box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            background: white;
+        }
+        
+        .landing-title { font-family: 'Cinzel'; font-weight: 700; color: var(--primary-color); margin-bottom: 5px; font-size: 1.6rem; line-height: 1.2; }
+        .landing-subtitle { font-size: 0.85rem; color: #7f8c8d; letter-spacing: 2px; margin-bottom: 35px; text-transform: uppercase; font-weight: 500; }
+        
+        .input-elegant {
+            width: 100%; padding: 16px 20px; border: 2px solid #e0e0e0; border-radius: 50px;
+            margin-bottom: 20px; text-align: center; font-family: 'Poppins'; font-size: 1rem;
+            transition: 0.3s; background: #fcfcfc;
+        }
+        .input-elegant:focus { outline: none; border-color: var(--accent-color); background: white; box-shadow: 0 0 0 4px rgba(197, 160, 40, 0.15); }
+        
+        .btn-main {
+            width: 100%; padding: 16px; border: none; border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.3s; 
+            box-shadow: 0 8px 20px rgba(44, 62, 80, 0.3); letter-spacing: 0.5px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-main:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(44, 62, 80, 0.4); }
+        .btn-main:disabled { cursor: not-allowed; opacity: 0.8; }
+        
+        /* --- ADMIN BUTTON --- */
+        .admin-portal-wrapper {
+            position: relative; z-index: 10; margin-top: 30px;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        .divider-line { width: 100px; height: 2px; background: rgba(255,255,255,0.3); }
+        .btn-admin-portal {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 28px; border-radius: 50px;
+            color: white; font-size: 0.9rem; font-weight: 500;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .btn-admin-portal:hover {
+            background: var(--accent-color); 
+            border-color: var(--accent-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(197, 160, 40, 0.4);
+        }
+
+        /* --- DASHBOARD --- */
+        .sidebar {
+            width: var(--sidebar-width); background: var(--primary-color); color: white;
+            display: flex; flex-direction: column; padding: 25px; flex-shrink: 0;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+        }
+        .sidebar-header { padding-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
+        .sidebar-header i { font-size: 1.6rem; color: var(--accent-color); }
+        .sidebar-menu { list-style: none; flex: 1; }
+        .sidebar-menu li { margin-bottom: 8px; }
+        .sidebar-menu a {
+            display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+            color: rgba(255,255,255,0.7); text-decoration: none; border-radius: 12px;
+            transition: 0.2s; cursor: pointer; font-size: 0.95rem;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.1); color: white; }
+        .sidebar-menu a.active { background: var(--accent-color); color: white; }
+        
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; height: 100vh; }
+        
+        /* Dashboard Components */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
+        .page-title h2 { font-family: 'Cinzel'; color: var(--primary-color); font-size: 1.8rem; letter-spacing: 1px; }
+        .page-title p { color: #7f8c8d; font-size: 0.95rem; }
+
+        .landscape-toolbar {
+            display: flex; gap: 12px; background: white; padding: 18px; border-radius: 16px;
+            margin-bottom: 25px; border: 1px solid #eee; flex-wrap: wrap; align-items: center;
+        }
+        
+        .btn-tool {
+            padding: 10px 18px; border-radius: 8px; border: 1px solid #ddd; background: white;
+            color: #555; font-size: 0.9rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-weight: 500;
+        }
+        .btn-tool:hover { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-tool.primary { background: var(--primary-color); color: white; border: none; }
+        .btn-tool.success { background: var(--success); color: white; border: none; }
+        .btn-tool.excel { background: var(--excel-color); color: white; border: none; }
+        .btn-tool.danger { background: var(--danger); color: white; border: none; }
+
+        /* Table */
+        .table-container { background: white; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        thead { background: #f8f9fa; border-bottom: 2px solid #eee; }
+        th { color: var(--primary-color); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+        th, td { padding: 18px 25px; text-align: left; border-bottom: 1px solid #eee; }
+        tr:hover { background-color: #fcfcfc; }
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-lulus { background: #e8f8f5; color: var(--success); }
+        .badge-gagal { background: #fdedec; color: var(--danger); }
+
+        /* --- SETTINGS --- */
+        .cert-settings-container { max-width: 1000px; margin: 0 auto; text-align: center; padding-bottom: 50px; }
+        .settings-hero { margin-bottom: 40px; }
+        .settings-hero h2 { font-family: 'Cinzel'; font-size: 2.2rem; color: var(--primary-color); margin-bottom: 10px; }
+        .section-title { text-align: left; font-size: 1.2rem; color: var(--primary-color); border-bottom: 2px solid #eee; padding-bottom: 10px; margin: 40px 0 20px 0; font-family:'Playfair Display'; font-weight:700;}
+        
+        .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .control-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 20px; text-align: left; border: 1px solid #eee; }
+        .control-card label { display: block; font-weight: 600; margin-bottom: 10px; color: var(--primary-color); }
+        
+        input[type="range"] { width: 100%; accent-color: var(--accent-color); }
+
+        .bg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .bg-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; border: 2px solid transparent; }
+        .bg-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .bg-card.selected { border-color: var(--accent-color); }
+        .bg-preview { height: 160px; width: 100%; background-size: cover; background-position: center; border-bottom: 1px solid #eee; }
+        .bg-preview-upload { display: flex; align-items: center; justify-content: center; background: #f8f9fa; color: #999; border: 2px dashed #ddd; height: 160px;}
+        .bg-card h4 { padding: 15px; margin: 0; color: var(--primary-color); font-family: 'Cinzel'; font-size: 1.1rem; }
+        .bg-card p { padding: 0 15px 15px; font-size: 0.85rem; color: #888; margin: 0; }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-box {
+            background: white; width: 90%; max-width: 500px; padding: 35px; border-radius: 20px;
+            transform: translateY(30px); transition: 0.3s; position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .modal-box.large { max-width: 1000px; background: #333; padding: 0; overflow: hidden; } /* Dark bg for preview */
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .close-modal { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; font-size: 1.5rem; cursor: pointer; color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; z-index: 10; }
+        .close-modal:hover { background: #fff; color: var(--danger); }
+
+        /* Certificate Preview Area */
+        .cert-wrapper {
+            width: 100%;
+            background: #555;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+        }
+        #certPreviewImg {
+            max-width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid #ddd;
+        }
+
+        /* --- SPINNER CSS --- */
+        .spinner-grow {
+            display: inline-block; width: 1rem; height: 1rem; vertical-align: text-bottom;
+            background-color: currentColor; border-radius: 50%; animation: spinner-grow .75s linear infinite;
+        }
+        .spinner-grow-sm { width: 0.75rem; height: 0.75rem; }
+        @keyframes spinner-grow { 0% { transform: scale(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 768px) {
+            .landing-card { padding: 40px 25px; }
+            .app-dashboard-mode { flex-direction: column; }
+            .sidebar { width: 100%; padding: 15px; flex-direction: row; align-items: center; justify-content: space-between; height: auto; position: fixed; top: 0; z-index: 100; }
+            .sidebar-menu { display: none; } 
+            .sidebar-header { border: none; margin: 0; }
+            .main-content { padding: 80px 15px 15px 15px; margin-top: 60px; height: auto; }
+            .landscape-toolbar { flex-direction: column; }
+            .btn-tool { width: 100%; justify-content: center; }
+        }
+
+        /* --- PRINT CSS (PERFECT PRINT) --- */
+        @media print {
+            @page { size: landscape; margin: 0; }
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea {
+                position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+                display: flex; justify-content: center; align-items: center;
+                background: white; z-index: 9999;
+            }
+            #printArea img { width: 100%; height: 100%; object-fit: contain; display: block; }
+            .sidebar, .landscape-toolbar, .btn-tool, .nav-item, .toast, .app-landing-mode, .modal-box, .close-modal { display: none !important; }
+        }
+    </style>
+</head>
+<body class="app-landing-mode" id="appBody">
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <!-- HIDDEN PRINT AREA (Hanya tampil saat print) -->
+    <div id="printArea" style="display:none;">
+        <img id="printImage" src="" alt="Piagam">
+    </div>
+
+    <!-- ================= VIEW 1: LANDING PAGE ================= -->
+    <div id="view-landing" class="view-section" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <div class="landing-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2997/2997258.png" alt="Logo" class="landing-logo" id="landingLogoImg">
+            <h1 class="landing-title">SMA IT Putri Abu Hurairah</h1>
+            <p class="landing-subtitle">Pengumuman Kelulusan TP. 2025/2026</p>
+            
+            <form id="formKelulusan">
+                <input type="number" id="nisn" class="input-elegant" placeholder="Masukkan NISN Anda" required autocomplete="off">
+                <button type="submit" class="btn-main" id="btnCek">
+                    <i class="fas fa-search" style="margin-right: 8px;"></i> Cek Kelulusan
+                </button>
+            </form>
+        </div>
+
+        <div class="admin-portal-wrapper">
+            <div class="divider-line"></div>
+            <button class="btn-admin-portal" onclick="switchView('dashboard')">
+                <i class="fas fa-user-shield"></i>
+                <span>Portal Admin Sekolah</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= VIEW 2: DASHBOARD ================= -->
+    <div id="view-dashboard" class="view-section" style="display: none; width: 100%; height: 100%;">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-graduation-cap"></i>
+                <h3 style="font-size: 1rem; font-weight: 600; font-family:'Cinzel'">Admin Panel</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" onclick="switchView('dashboard')"><i class="fas fa-database"></i> Data Siswa</a></li>
+                <li><a href="#" onclick="switchView('settings')"><i class="fas fa-palette"></i> Pengaturan & Desain</a></li>
+                <li><a href="#" onclick="printReport()"><i class="fas fa-print"></i> Cetak Laporan</a></li>
+                <li style="margin-top: 20px;"><a href="#" onclick="logout()" style="background: rgba(231, 76, 60, 0.2); color: #ff8a80;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+            <div style="margin-top: auto; font-size: 0.8rem; opacity: 0.4; text-align: center;">&copy; 2025 SMA IT Putri</div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h2>Laporan Data Siswa</h2>
+                    <p>Manajemen Data Kelulusan & Arsip</p>
+                </div>
+                <div class="user-info" style="display: flex; align-items: center; gap: 12px; background: white; padding: 8px 15px; border-radius: 30px; border: 1px solid #eee;">
+                    <span style="font-size: 0.9rem; color: #666; font-weight: 500;">Administrator</span>
+                    <img src="https://picsum.photos/seed/admin/40/40" style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid #eee;">
+                </div>
+            </div>
+
+            <div class="landscape-toolbar">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-tool primary" onclick="openAddData()"><i class="fas fa-plus"></i> Tambah Data</button>
+                    <button class="btn-tool" onclick="triggerSync()"><i class="fas fa-file-import"></i> Import CSV</button>
+                    <input type="file" id="excelInput" class="file-input-hidden" accept=".csv" onchange="handleExcelSync(this)">
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-left: auto;">
+                    <button class="btn-tool excel" onclick="exportLulusToExcel()"><i class="fas fa-file-export"></i> Export Excel</button>
+                    <button class="btn-tool" onclick="backupData()"><i class="fas fa-save"></i> Backup</button>
+                    <button class="btn-tool" onclick="triggerRestore()"><i class="fas fa-upload"></i> Restore</button>
+                    <input type="file" id="restoreInput" class="file-input-hidden" accept=".json" onchange="handleRestore(this)">
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="reportTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th>NIS</th>
+                            <th>NISN</th>
+                            <th>Nama Lengkap</th>
+                            <th>Status Kelulusan</th>
+                            <th style="width: 100px; text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= VIEW 3: SETTINGS ================= -->
+    <div id="view-settings" class="view-section" style="display: none; width: 100%; padding-top: 40px;">
+        <div class="top-bar" style="justify-content: center; margin-bottom: 20px;">
+            <button class="btn-tool" onclick="switchView('dashboard')"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</button>
+        </div>
+        
+        <div class="cert-settings-container">
+            <div class="settings-hero">
+                <h2>Pengaturan & Desain</h2>
+                <p>Kustomisasi tampilan aplikasi dan sertifikat digital.</p>
+            </div>
+
+            <!-- 1. BACKGROUND APP -->
+            <h3 class="section-title"><i class="fas fa-image"></i> Background Halaman Utama</h3>
+            <div class="bg-grid">
+                <div class="bg-card" id="bg-app-default" onclick="setAppBg('default')">
+                    <div class="bg-preview" style="background: url('https://picsum.photos/seed/islamic/400/300') center/cover;"></div>
+                    <h4>Default (Islami)</h4>
+                </div>
+                <div class="bg-card" id="bg-app-nature" onclick="setAppBg('nature')">
+                    <div class="bg-preview" style="background: url('https://picsum.photos/seed/nature/400/300') center/cover;"></div>
+                    <h4>Alam</h4>
+                </div>
+                <div class="bg-card" id="bg-app-custom" onclick="document.getElementById('appBgUpload').click()">
+                    <div class="bg-preview bg-preview-upload">
+                        <div style="text-align: center;">
+                            <i class="fas fa-camera" style="font-size: 1.5rem;"></i>
+                            <p style="margin:0; font-size:0.8rem;">Upload Sendiri</p>
+                        </div>
+                    </div>
+                    <h4>Upload Sendiri</h4>
+                    <input type="file" id="appBgUpload" hidden accept="image/*" onchange="handleAppBgUpload(this)">
+                </div>
+            </div>
+
+            <!-- 2. LOGO SETTINGS -->
+            <h3 class="section-title" style="margin-top: 50px;"><i class="fas fa-certificate"></i> Logo Sekolah</h3>
+            <div class="control-grid">
+                <div class="control-card">
+                    <label>Upload Logo</label>
+                    <button class="btn-tool" onclick="document.getElementById('logoUpload').click()" style="width:100%">
+                        <i class="fas fa-upload"></i> Pilih File Logo
+                    </button>
+                    <input type="file" id="logoUpload" hidden accept="image/*" onchange="handleLogoUpload(this)">
+                    <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Gunakan format PNG transparan untuk hasil terbaik.</p>
+                </div>
+                <div class="control-card">
+                    <label>Ukuran Logo dalam Piagam: <span id="logoSizeVal">100</span>px</label>
+                    <input type="range" id="logoSizeRange" min="50" max="250" value="100" oninput="updateLogoSize(this.value)">
+                </div>
+            </div>
+
+            <!-- 3. CERTIFICATE DESIGN -->
+            <h3 class="section-title" style="margin-top: 50px;"><i class="fas fa-paint-brush"></i> Desain Sertifikat</h3>
+            <div class="bg-grid">
+                <div class="bg-card selected" id="card-classic" onclick="selectCertificateBg('classic')">
+                    <div class="bg-preview" style="background: linear-gradient(135deg, #FFFCF2, #FFF); border: 4px double #C5A028; display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-award" style="font-size:3rem; color:#C5A028; opacity:0.5"></i>
+                    </div>
+                    <h4>Elegan Emas</h4>
+                    <p>Desain klasik dengan bingkai emas.</p>
+                </div>
+                <div class="bg-card" id="card-blue" onclick="selectCertificateBg('blue')">
+                    <div class="bg-preview" style="background: linear-gradient(135deg, #F0F8FF, #FFF); border: 4px double #1a252f; display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-university" style="font-size:3rem; color:#1a252f; opacity:0.5"></i>
+                    </div>
+                    <h4>Akademik Biru</h4>
+                    <p>Nuansa formal akademik.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- Modal Result (Succes Message) -->
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeModal('resultModal')" style="background:none; color:#333;">&times;</button>
+            <div class="modal-header">
+                <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success); margin-bottom: 20px; display:block;"></i>
+                <h2 style="color: var(--primary-color); font-family:'Cinzel';">SELAMAT! LULUS</h2>
+            </div>
+            <div style="text-align: center;">
+                <p style="font-size: 1.4rem; font-weight: 600; margin-bottom: 5px; font-family:'Playfair Display';" id="resName"></p>
+                 <p style="color: #777; margin-bottom: 30px; font-size: 1.1rem;" id="resNis"></p>
+                <p style="color: #777; margin-bottom: 30px; font-size: 1.1rem;" id="resNisn"></p>
+                
+                <button class="btn-tool primary" onclick="printCertificateDirectly()" style="width: 100%; justify-content: center; padding: 16px; margin-bottom: 10px; font-size: 1.1rem;">
+                    <i class="fas fa-print"></i> Cetak Langsung
+                </button>
+                <button class="btn-tool success" onclick="generateCertificateFromModal()" style="width: 100%; justify-content: center; padding: 16px; margin-bottom: 10px; font-size: 1.1rem; background: var(--success); color: white; border:none;">
+                    <i class="fas fa-certificate"></i> Lihat Piagam Digital
+                </button>
+                <button class="btn-tool" onclick="closeModal('resultModal')" style="width: 100%; justify-content: center; padding: 16px;">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Data -->
+    <div class="modal-overlay" id="addDataModal">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeModal('addDataModal')" style="background:none; color:#333;">&times;</button>
+            <div class="modal-header">
+                <h3 style="color: var(--primary-color); font-family:'Cinzel'">Tambah Data Siswa</h3>
+            </div>
+            <form onsubmit="event.preventDefault(); saveNewData();">
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:500;">NIS</label>
+                    <input type="number" id="addNis" class="input-elegant" style="text-align:left; border-radius:10px;" required>
+                    <label style="display:block; margin-bottom:8px; font-weight:500; margin-top:10px;">NISN</label>
+                    <input type="number" id="addNisn" class="input-elegant" style="text-align:left; border-radius:10px;" required>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:500;">Nama Lengkap</label>
+                    <input type="text" id="addNama" class="input-elegant" style="text-align:left; border-radius:10px;" required>
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:500;">Status</label>
+                    <select id="addStatus" class="input-elegant" style="text-align:left; border-radius:10px;"><option value="LULUS">LULUS</option><option value="TIDAK LULUS">TIDAK LULUS</option></select>
+                </div>
+                <button type="submit" class="btn-main">Simpan Data</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Certificate Preview -->
+    <div class="modal-overlay" id="imageModal">
+        <div class="modal-box large">
+            <button class="close-modal" onclick="closeModal('imageModal')">&times;</button>
+            <div class="cert-wrapper">
+                <img id="certPreviewImg" src="" alt="Piagam">
+            </div>
+            
+            <div style="background: white; padding: 25px; text-align: center;">
+                <p style="margin-bottom:15px; color:#666; font-size:0.9rem;">Tekan tombol di bawah untuk mencetak piagam ukuran A4 Landscape.</p>
+                <button class="btn-tool primary" onclick="printCertImage()" style="padding: 12px 30px; font-size: 1.1rem;">
+                    <i class="fas fa-print"></i> Cetak / Simpan PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="restoreInputHidden" class="file-input-hidden" accept=".json" onchange="processRestore(this)">
+
+    <script>
+        // --- STATE & DATA ---
+        let databaseSiswa = [
+            { nis: "AB12345",nisn: "12345", nama: "Siti Aminah", status: "LULUS" },
+            { nis: "AB12345",nisn: "67890", nama: "Fatimah Az-Zahra", status: "LULUS" },
+            { nis: "AB12345",nisn: "54321", nama: "Aisyah Humaira", status: "TIDAK LULUS" },
+            { nis: "AB12345",nisn: "11223", nama: "Khadijah Putri", status: "LULUS" }
+        ];
+        let currentStudentData = null;
+        
+        // --- SETTINGS STATE ---
+        let certBgType = 'classic'; 
+        let appBgUrl = localStorage.getItem('appBackgroundUrl') || 'https://picsum.photos/seed/islamic/1920/1080';
+        let certLogoImg = new Image();
+        certLogoImg.crossOrigin = "Anonymous";
+        certLogoImg.src = "https://cdn-icons-png.flaticon.com/512/2997/2997258.png"; // Default Logo
+        let certLogoSize = 100;
+
+        // --- TOAST SYSTEM ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            let icon = 'fa-info-circle';
+            if (type === 'success') icon = 'fa-check-circle';
+            if (type === 'error') icon = 'fa-exclamation-triangle';
+            toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // --- APP BACKGROUND LOGIC ---
+        function updateAppBackground(url) {
+            appBgUrl = url;
+            const landingMode = document.querySelector('.app-landing-mode');
+            if(landingMode) landingMode.style.backgroundImage = `url('${url}')`;
+            localStorage.setItem('appBackgroundUrl', url);
+        }
+        function setAppBg(type) {
+            if(type === 'default') updateAppBackground('https://picsum.photos/seed/islamic/1920/1080');
+            if(type === 'nature') updateAppBackground('https://picsum.photos/seed/nature/1920/1080');
+            showToast("Background Berhasil Diubah", "success");
+        }
+        function handleAppBgUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => { updateAppBackground(e.target.result); showToast("Upload Berhasil", "success"); };
+            reader.readAsDataURL(file);
+        }
+
+        // --- LOGO LOGIC ---
+        function updateLogoSize(val) {
+            certLogoSize = parseInt(val);
+            document.getElementById('logoSizeVal').innerText = val;
+        }
+        function handleLogoUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    certLogoImg = img;
+                    showToast("Logo Sekolah Diperbarui", "success");
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- CERTIFICATE BACKGROUND LOGIC ---
+        function selectCertificateBg(type) {
+            certBgType = type;
+            document.querySelectorAll('#view-settings .bg-card').forEach(c => c.classList.remove('selected'));
+            if(document.getElementById('card-' + type)) {
+                document.getElementById('card-' + type).classList.add('selected');
+            }
+            showToast("Tema Sertifikat Diperbarui", "success");
+        }
+
+        // --- NAVIGATION ---
+        function switchView(viewName) {
+            const body = document.getElementById('appBody');
+            const landing = document.getElementById('view-landing');
+            const dashboard = document.getElementById('view-dashboard');
+            const settings = document.getElementById('view-settings');
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+
+            if (viewName === 'dashboard') {
+                const pass = prompt("Masukkan Password Admin:");
+                if (pass !== "Admin 123") { showToast("Password Salah!", "error"); return; }
+                body.className = 'app-dashboard-mode';
+                landing.style.display = 'none'; settings.style.display = 'none'; dashboard.style.display = 'flex';
+                document.querySelectorAll('.sidebar-menu a')[0].classList.add('active');
+                renderTable();
+                showToast("Selamat Datang Admin", "success");
+            } else if (viewName === 'settings') {
+                settings.style.display = 'block'; dashboard.style.display = 'none';
+                document.querySelectorAll('.sidebar-menu a')[1].classList.add('active');
+            } else {
+                body.className = 'app-landing-mode';
+                dashboard.style.display = 'none'; settings.style.display = 'none'; landing.style.display = 'flex';
+                updateAppBackground(appBgUrl); 
+            }
+        }
+        function logout() { if(confirm("Keluar dari Admin?")) switchView('home'); }
+
+        // --- CRUD ---
+        function renderTable() {
+            const tbody = document.querySelector('#reportTable tbody');
+            tbody.innerHTML = '';
+            if (databaseSiswa.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#999;">Tidak ada data</td></tr>'; return; }
+            databaseSiswa.forEach((s, i) => {
+                const badgeClass = s.status === 'LULUS' ? 'badge-lulus' : 'badge-gagal';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i+1}</td><td style="font-family:monospace; font-weight:600;">${s.nisn}</td>
+                    <td style="font-weight: 500;">${s.nama}</td><td><span class="badge ${badgeClass}">${s.status}</span></td>
+                    <td style="text-align: center;"><button class="btn-tool danger" style="padding: 6px 12px; border:none;" onclick="deleteStudent('${s.nisn}')"><i class="fas fa-trash-alt"></i></button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- FORM SUBMIT ---
+        document.getElementById('formKelulusan').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnCek');
+            const originalContent = btn.innerHTML;
+            const nisn = document.getElementById('nisn').value;
+
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-grow spinner-grow-sm"></span><span style="margin-left: 8px;">Loading...</span>`;
+
+            setTimeout(() => {
+                const siswa = databaseSiswa.find(s => s.nisn === nisn);
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+
+                if(siswa) {
+                    if(siswa.status === 'LULUS') {
+                        document.getElementById('resName').innerText = siswa.nama;
+                        document.getElementById('resNis').innerText = "NIS: " + siswa.nis;
+                        document.getElementById('resNisn').innerText = "NISN: " + siswa.nisn;
+                        currentStudentData = siswa;
+                        document.getElementById('resultModal').classList.add('active');
+                    } else { 
+                        showToast(`Mohon maaf, ${siswa.nama} TIDAK LULUS.`, "error"); 
+                    }
+                } else { 
+                    showToast("Data NISN tidak ditemukan!", "error"); 
+                }
+            }, 1500);
+        });
+
+        function openAddData() { document.getElementById('addNis').value = ''; document.getElementById('addNisn').value = ''; document.getElementById('addNama').value = ''; document.getElementById('addDataModal').classList.add('active'); }
+        function saveNewData() {
+            const nis = document.getElementById('addNis').value;
+            const nisn = document.getElementById('addNisn').value;
+            const nama = document.getElementById('addNama').value;
+            const status = document.getElementById('addStatus').value;
+            if( !nis ||!nisn || !nama) return showToast("Data tidak lengkap!", "error");
+            databaseSiswa.push({ nis, nisn, nama, status });
+            renderTable(); closeModal('addDataModal'); showToast("Data Disimpan", "success");
+        }
+        function deleteStudent(nisn) { if(confirm(`Hapus ${nisn}?`)) { databaseSiswa = databaseSiswa.filter(s => s.nisn !== nisn); renderTable(); showToast("Data Dihapus", "info"); } }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        
+        // --- IMPORT EXPORT ---
+        function triggerSync() { document.getElementById('excelInput').click(); }
+        function handleExcelSync(input) {
+            const file = input.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const lines = e.target.result.split('\n'); let added = 0;
+                lines.forEach(line => {
+                    const cols = line.split(',');
+                    if (cols.length >= 3) {
+                        const n = cols[0].trim(); const nam = cols[1].trim(); const stat = cols[2].trim();
+                        if(!databaseSiswa.find(s => s.nisn === n)) { databaseSiswa.push({ nisn: n, nama: nam, status: stat }); added++; }
+                    }
+                });
+                renderTable(); showToast(`Import Selesai (${added})`, "success"); input.value = '';
+            };
+            reader.readAsText(file);
+        }
+        function exportLulusToExcel() {
+            const lulus = databaseSiswa.filter(s => s.status === 'LULUS');
+            if(lulus.length === 0) return showToast("Tidak ada data lulus", "error");
+            let csv = "data:text/csv;charset=utf-8,No,NISN,Nama,Status\n";
+            lulus.forEach((row, i) => { csv += `${i+1},${row.nisn},"${row.nama}",${row.status}\n`; });
+            const link = document.createElement("a");
+            link.href = encodeURI(csv); link.download = `Data_Lulus_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+        }
+        function backupData() {
+            const blob = new Blob([JSON.stringify(databaseSiswa, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob); a.download = "Backup_Data_Siswa.json"; a.click();
+        }
+        function triggerRestore() { document.getElementById('restoreInputHidden').click(); }
+        function processRestore(input) {
+            const file = input.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if(Array.isArray(data) && confirm("Timpa data sekarang?")) {
+                        databaseSiswa = data; renderTable(); showToast("Restore Berhasil", "success");
+                    }
+                } catch (err) { showToast("Format JSON Salah", "error"); }
+            };
+            reader.readAsText(file); input.value = '';
+        }
+        function printReport() { window.print(); }
+
+        function generateCertificateFromModal() { closeModal('resultModal'); if(!currentStudentData) return; generateCertificate(currentStudentData); }
+        
+        // --- GENERATE CERTIFICATE (CLEAN VERSION) ---
+        function generateCertificate(siswa) {
+            const modal = document.getElementById('imageModal');
+            const imgElement = document.getElementById('certPreviewImg');
+            const printImgElement = document.getElementById('printImage');
+            const canvas = document.createElement('canvas');
+            const w = 1123; const h = 794; // A4 Landscape at 96 DPI
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+
+            const drawContent = () => {
+                // 1. BACKGROUND
+                ctx.fillStyle = "#FFFCF2"; // Warna kertas krem elegan
+                ctx.fillRect(0, 0, w, h);
+
+                // 2. ELEGANT FRAME / BORDER
+                const margin = 30;
+                if(certBgType === 'classic') {
+                    // Gold Theme
+                    ctx.strokeStyle = "#C5A028"; ctx.lineWidth = 4; ctx.strokeRect(margin, margin, w - margin*2, h - margin*2);
+                    ctx.strokeStyle = "#C5A028"; ctx.lineWidth = 1; ctx.strokeRect(margin + 8, margin + 8, w - (margin+8)*2, h - (margin+8)*2);
+                } else {
+                    // Blue Theme
+                    ctx.strokeStyle = "#1a252f"; ctx.lineWidth = 4; ctx.strokeRect(margin, margin, w - margin*2, h - margin*2);
+                    ctx.strokeStyle = "#1a252f"; ctx.lineWidth = 1; ctx.strokeRect(margin + 8, margin + 8, w - (margin+8)*2, h - (margin+8)*2);
+                }
+
+                // 3. LOGO (EDITABLE SIZE)
+                const logoY = 100;
+                if (certLogoImg.complete) {
+                    ctx.drawImage(certLogoImg, (w/2) - (certLogoSize/2), logoY - (certLogoSize/2), certLogoSize, certLogoSize);
+                }
+
+                // 4. HEADER TEXT
+                ctx.textAlign = "center";
+                
+                // School Name
+                ctx.fillStyle = (certBgType === 'classic') ? "#2C3E50" : "#1a252f";
+                ctx.font = "700 42px Cinzel"; 
+                ctx.fillText("SMA IT PUTRI ABU HURAIRAH", w/2, logoY + (certLogoSize/2) + 50);
+
+                // Certificate Title
+                ctx.font = "800 36px Cinzel"; 
+                ctx.fillStyle = (certBgType === 'classic') ? "#C5A028" : "#2980b9";
+                ctx.fillText("PIAGAM PENGHARGAAN", w/2, logoY + (certLogoSize/2) + 90);
+
+                ctx.font = "italic 32px Great Vibes";
+                ctx.fillStyle = "#555";
+                ctx.fillText("Kelulusan & Prestasi", w/2, logoY + (certLogoSize/2) + 115);
+
+                // 5. BODY CONTENT (No Grid Lines)
+                ctx.fillStyle = "#444";
+                ctx.font = "500 20px Poppins";
+                ctx.fillText("Diberikan dengan bangga kepada:", w/2, 300);
+                
+                // STUDENT NAME (Menonjol & Elegan)
+                ctx.shadowColor = "rgba(0,0,0,0.1)";
+                ctx.shadowBlur = 4;
+                ctx.fillStyle = "#000";
+                ctx.font = "700 64px Playfair Display"; 
+                ctx.fillText(siswa.nama, w/2, 375);
+                ctx.shadowColor = "transparent";
+                
+                ctx.fillStyle = "#666";
+                ctx.font = "500 22px Poppins";
+                ctx.fillText(`NISN: ${siswa.nisn}`, w/2, 405);
+
+                // Paragraph Text
+                const paragraph = `Atas kelulusannya dari SMA IT Putri Abu Hurairah Mataram dan telah menyelesaikan seluruh rangkaian pendidikan dengan predikat memuaskan.`;
+                ctx.font = "400 18px Poppins";
+                ctx.fillStyle = "#333";
+                
+                const maxWidth = 800;
+                const words = paragraph.split(' ');
+                let line = ''; 
+                let y = 460; 
+                
+                for(let n = 0; n < words.length; n++) {
+                    const testLine = line + words[n] + ' ';
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxWidth && n > 0) {
+                        ctx.fillText(line, w/2, y);
+                        line = words[n] + ' ';
+                        y += 30; 
+                    } else {
+                        line = testLine;
+                    }
+                }
+                ctx.fillText(line, w/2, y);
+
+                // 6. DECORATIVE SEPARATOR LINE (Replacing Ribbon)
+                ctx.beginPath();
+                ctx.moveTo(w/2 - 150, y + 30);
+                ctx.lineTo(w/2 + 150, y + 30);
+                ctx.strokeStyle = (certBgType === 'classic') ? "#C5A028" : "#1a252f";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 7. SIGNATURE SECTION
+                const date = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                ctx.font = "500 18px Poppins";
+                ctx.fillStyle = "#555";
+                ctx.fillText(`Mataram, ${date}`, w/2, y + 60);
+                
+                ctx.font = "700 20px Poppins";
+                ctx.fillStyle = "#2C3E50";
+                ctx.fillText("Kepala Sekolah", w/2, y + 90);
+                
+                // Signature Stroke (Simulated)
+                ctx.font = "bold 40px Great Vibes";
+                ctx.fillStyle = (certBgType === 'classic') ? "#C5A028" : "#000"; 
+                ctx.fillText("Gunawan Trianto, M.Pd", w/2, y + 130);
+
+                // 8. OUTPUT
+                const dataUrl = canvas.toDataURL('image/png');
+                imgElement.src = dataUrl;
+                printImgElement.src = dataUrl; 
+                
+                modal.classList.add('active');
+            };
+
+            drawContent();
+        }
+
+        // Direct Print without opening Modal
+        function printCertificateDirectly() {
+            if(!currentStudentData) return;
+            generateCertificate(currentStudentData); // Generate first to get the image
+            setTimeout(() => {
+                document.getElementById('printArea').style.display = 'flex';
+                window.print();
+                setTimeout(() => { document.getElementById('printArea').style.display = 'none'; }, 1000);
+            }, 500);
+        }
+
+        function printCertImage() { 
+            document.getElementById('printArea').style.display = 'flex';
+            window.print();
+            setTimeout(() => { document.getElementById('printArea').style.display = 'none'; }, 1000);
+        }
+
+        // Init
+        updateAppBackground(appBgUrl);
+        renderTable();
+    </script>
+</body>
+</html>
