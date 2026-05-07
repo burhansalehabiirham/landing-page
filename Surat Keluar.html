@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Surat Keluar - SMA IT Puri Abu Hurairah</title>
+    <style>
+        :root {
+            /* Color Palette */
+            --primary-color: #2c3e50;
+            --primary-light: #34495e;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --teal-color: #16a085;
+            --word-color: #2b579a;
+            --pdf-color: #c0392b;
+            
+            /* UI Variables */
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #e1e4e8;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --radius: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+        }
+
+        /* --- LANDING PAGE --- */
+        #landingPage {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
+            z-index: 9999; display: flex; justify-content: center; align-items: center;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        #landingPage.slideUp { transform: translateY(-100%); }
+        
+        .landing-content {
+            text-align: center; color: white; max-width: 600px; padding: 2rem;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .landing-logo { width: 100px; height: 100px; background: white; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; }
+        .landing-logo img { width: 70%; height: 70%; object-fit: contain; }
+        .landing-title { font-size: 2rem; margin-bottom: 10px; font-weight: 700; }
+        .landing-subtitle { font-size: 1.1rem; margin-bottom: 30px; opacity: 0.9; }
+        
+        .btn-start {
+            padding: 15px 40px; font-size: 1.1rem; background: var(--success-color); 
+            border: none; color: white; border-radius: 50px; cursor: pointer; 
+            box-shadow: 0 10px 20px rgba(39, 174, 96, 0.4); transition: transform 0.2s;
+        }
+        .btn-start:hover { transform: scale(1.05); }
+
+        /* --- Navbar --- */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 15px; flex: 1; min-width: 280px; }
+        .logo-box { 
+            width: 50px; height: 50px; 
+            background-color: white; color: var(--primary-color);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-weight: 700; font-size: 1.2rem; 
+            border: 2px solid rgba(255,255,255,0.3);
+            flex-shrink: 0; overflow: hidden;
+            padding: 5px;
+        }
+        .app-title h1 { font-size: 1.25rem; font-weight: 700; line-height: 1.2; }
+        .app-title p { font-size: 0.8rem; font-weight: 500; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
+        .date-display { font-size: 0.85rem; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+
+        /* --- Main Content --- */
+        main { padding: 2rem; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+        /* --- Controls --- */
+        .controls { 
+            display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; 
+            justify-content: space-between; align-items: center; 
+            background: var(--card-bg); padding: 15px; border-radius: var(--radius); 
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
+        }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        
+        button { 
+            padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; 
+            font-size: 0.9rem; font-weight: 500; transition: all 0.2s ease; 
+            color: white; display: inline-flex; align-items: center; gap: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); opacity: 0.95; }
+        button:active { transform: translateY(0); }
+        
+        .btn-add { background-color: var(--secondary-color); }
+        .btn-print { background-color: var(--success-color); }
+        .btn-import { background-color: var(--teal-color); }
+        .btn-backup { background-color: var(--warning-color); color: #fff; }
+        .btn-restore { background-color: #8e44ad; }
+        .btn-cancel { background-color: #95a5a6; }
+        
+        .btn-action { padding: 6px 12px; font-size: 0.75rem; margin-right: 4px; border-radius: 4px; }
+        .btn-edit { background-color: var(--warning-color); }
+        .btn-delete { background-color: var(--accent-color); }
+
+        /* --- Table Styling --- */
+        .table-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; border: 1px solid var(--border-color); }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        th { background-color: #f8f9fa; color: var(--primary-color); padding: 15px 12px; text-align: left; font-weight: 600; font-size: 0.85rem; border-bottom: 2px solid var(--border-color); white-space: nowrap; }
+        td { padding: 12px; border-bottom: 1px solid var(--border-color); color: #555; font-size: 0.9rem; vertical-align: middle; }
+        th:first-child, td:first-child { text-align: center; width: 50px; }
+        th:last-child, td:last-child { text-align: center; width: 140px; }
+        tr:hover td { background-color: #f1f7fc; }
+
+        .file-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; cursor: pointer; margin-right: 4px; margin-bottom: 4px; transition: opacity 0.2s; }
+        .file-badge:hover { opacity: 0.8; }
+        .file-badge.img { background-color: #e8f4fd; color: var(--secondary-color); border: 1px solid rgba(52, 152, 219, 0.2); }
+        .file-badge.pdf { background-color: #fdedec; color: var(--pdf-color); border: 1px solid rgba(231, 76, 60, 0.2); }
+        .file-badge.word { background-color: #eef2f7; color: var(--word-color); border: 1px solid rgba(43, 87, 154, 0.2); }
+
+        /* --- Signature --- */
+        .signature-section { display: flex; justify-content: flex-end; margin-top: 50px; margin-bottom: 50px; padding-right: 20px; }
+        .sig-block { text-align: center; width: 250px; }
+        .sig-space { height: 80px; }
+        .sig-name { margin-top: 5px; font-weight: bold; color: var(--primary-color); font-size: 1rem; }
+
+        /* --- Footer --- */
+        .doc-footer { margin-top: auto; border-top: 1px solid var(--border-color); padding: 15px 2rem; display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; background: var(--card-bg); }
+
+        /* --- Modal Styling --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.7); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        .modal-content { background: var(--card-bg); padding: 2rem; border-radius: 12px; width: 90%; max-width: 750px; max-height: 90vh; overflow-y: auto; box-shadow: 0 15px 30px rgba(0,0,0,0.3); transform: scale(0.95); transition: transform 0.3s ease; }
+        .modal-overlay.open .modal-content { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .modal-header h2 { font-size: 1.5rem; color: var(--primary-color); }
+        .close-modal { background: none; border: none; font-size: 28px; color: #999; cursor: pointer; padding: 0; box-shadow: none; line-height: 1; }
+        .close-modal:hover { color: var(--accent-color); transform: none; }
+
+        /* --- Form Grid & Inputs --- */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 15px; }
+        .full-width { grid-column: span 2; }
+        .form-section-title { grid-column: span 2; color: var(--secondary-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; font-weight: 700; border-bottom: 1px dashed #ddd; padding-bottom: 5px; margin-bottom: 10px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 6px; font-weight: 500; font-size: 0.85rem; color: var(--primary-color); }
+        
+        /* Custom Input Group for Select + Add Button */
+        .input-group-wrapper { display: flex; gap: 8px; align-items: stretch; }
+        .form-control { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s; }
+        .form-control:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+        
+        .btn-sm-add { 
+            background: var(--secondary-color); border: none; border-radius: 6px; 
+            color: white; padding: 0 12px; cursor: pointer; font-size: 1.2rem; line-height: 1;
+            display: flex; align-items: center; justify-content: center; min-width: 44px;
+            flex-shrink: 0; transition: background 0.2s;
+        }
+        .btn-sm-add:hover { background: #2980b9; }
+
+        /* --- Preview --- */
+        #previewModal .modal-content { background: #333; color: white; max-width: 95vw; height: 90vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+        .preview-header { padding: 15px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; }
+        .preview-header h3 { font-size: 1.1rem; }
+        .preview-body { flex: 1; display: flex; justify-content: center; align-items: center; overflow: auto; padding: 20px; background: #1a1a1a; text-align: center; }
+        .preview-body img { max-width: 100%; max-height: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); border-radius: 4px; }
+        .preview-body iframe { width: 100%; height: 100%; border: none; background: white; }
+        .doc-placeholder { background: white; color: #333; padding: 40px; border-radius: 8px; text-align: center; max-width: 400px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .doc-icon { font-size: 64px; color: #ddd; display: block; margin-bottom: 20px; }
+        .btn-download { display: inline-block; margin-top: 20px; text-decoration: none; padding: 10px 20px; background: var(--word-color); color: white; border-radius: 5px; font-weight: bold; transition: background 0.2s; }
+        .btn-download:hover { background: #1e427d; }
+
+        /* --- Toast Notification --- */
+        #toast { visibility: hidden; min-width: 300px; background-color: #333; color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 2000; left: 50%; bottom: 30px; transform: translateX(-50%); box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-weight: 500; }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            @page { size: landscape; margin: 10mm; }
+            #landingPage, .controls, .modal-overlay, .doc-footer, .btn-action { display: none !important; }
+            body { background: white; color: black; -webkit-print-color-adjust: exact; }
+            main { padding: 0; margin: 0; width: 100%; max-width: 100%; }
+            .table-card { box-shadow: none; border: none; }
+            table { border: 1px solid #000; width: 100%; font-size: 10pt; }
+            th, td { border: 1px solid #000; padding: 6px; color: black; }
+            th { background-color: #f0f0f0 !important; color: black !important; border-bottom: 2px solid #000; }
+            .file-badge { display: none; }
+            .file-print-text { display: block; font-size: 9pt; color: #000; }
+            .signature-section { float: none; display: block; text-align: right; margin-top: 30px; }
+            .sig-block { margin-left: auto; margin-right: 0; }
+        }
+        .file-print-text { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- LANDING PAGE -->
+    <div id="landingPage">
+        <div class="landing-content">
+            <div class="landing-logo">
+                <img src="logo.png" alt="Logo">
+            </div>
+            <h1 class="landing-title">SMA IT PURI ABU HURAIRAH</h1>
+            <p class="landing-subtitle">Sistem Informasi Manajemen Surat Keluar</p>
+            <button class="btn-start" onclick="enterApp()">Mulai Aplikasi</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-area">
+            <div class="logo-box">
+                <img src="logo.png" alt="Logo">
+            </div>
+            <div class="app-title">
+                <h1>SMA IT PURI ABU HURAIRAH MATARAM</h1>
+                <p>APLIKASI SURAT KELUAR</p>
+            </div>
+        </div>
+        <div class="date-display">
+            <span id="currentDate"></span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="controls">
+            <div class="btn-group">
+                <button class="btn-add" onclick="openModal()">+ Buat Surat Baru</button>
+                <button class="btn-print" onclick="window.print()">🖨️ Cetak Laporan</button>
+            </div>
+            <div class="btn-group">
+                <input type="file" id="importInput" style="display: none;" onchange="importData(this)" accept=".json">
+                <button class="btn-import" onclick="document.getElementById('importInput').click()">📥 Import Data</button>
+                <button class="btn-backup" onclick="backupData()">💾 Backup Data</button>
+                <button class="btn-restore" onclick="document.getElementById('restoreInput').click()">🔄 Reset/Restore</button>
+                <input type="file" id="restoreInput" style="display: none;" onchange="restoreData(this)" accept=".json">
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="table-responsive">
+                <table id="mailTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nomor Surat</th>
+                            <th>Tanggal</th>
+                            <th>Jenis Surat</th>
+                            <th>Tujuan Surat</th>
+                            <th>Perihal</th>
+                            <th>Lampiran</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="sig-block">
+                <div class="sig-location">Mataram, <span id="sigDate"></span></div>
+                <div style="height: 5px;"></div>
+                <div class="sig-title">Kepala Sekolah</div>
+                <div class="sig-space"></div>
+                <div class="sig-name">Gunawan Trianto, M.Pd</div>
+                <div class="sig-nip" style="font-size:0.85rem; margin-top:5px;">NIP. 19800101 200501 1 001</div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="doc-footer">
+        <div>Kode: PAH-KSP-FORM-23-01</div>
+        <div>Rev: 02 / 14 Sept 2025</div>
+        <div>Hal. 1 dari 1</div>
+    </footer>
+
+    <!-- INPUT SURAT MODAL -->
+    <div id="inputModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Formulir Surat Keluar</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="mailForm" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="editIndex" value="-1">
+                <div class="form-grid">
+                    <div class="form-section-title">Informasi Surat</div>
+                    <div class="form-group">
+                        <label>Nomor Surat</label>
+                        <input type="text" id="nomorSurat" class="form-control" required placeholder="Contoh: 421/102/SMAIT/2023">
+                    </div>
+                    <div class="form-group">
+                        <label>Tanggal Surat</label>
+                        <input type="date" id="tanggalSurat" class="form-control" required>
+                    </div>
+
+                    <div class="form-section-title">Detail Surat Keluar</div>
+                    <div class="form-group">
+                        <label>Jenis Surat</label>
+                        <div class="input-group-wrapper">
+                            <select id="jenisSurat" class="form-control" required>
+                                <option value="">-- Pilih Jenis --</option>
+                                <!-- Opsi diisi via JS -->
+                            </select>
+                            <button type="button" class="btn-sm-add" title="Tambah Jenis Baru" onclick="openAddOptionModal('jenis')">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tujuan Surat</label>
+                        <div class="input-group-wrapper">
+                            <select id="tujuanSurat" class="form-control" required>
+                                <option value="">-- Pilih Tujuan --</option>
+                                <!-- Opsi diisi via JS -->
+                            </select>
+                            <button type="button" class="btn-sm-add" title="Tambah Tujuan Baru" onclick="openAddOptionModal('tujuan')">+</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Perihal Surat</label>
+                        <textarea id="perihalSurat" class="form-control" rows="2" placeholder="Isi ringkasan perihal surat..."></textarea>
+                    </div>
+
+                    <div class="form-section-title">Lampiran (Gambar/PDF/Word)</div>
+                    <div class="form-group">
+                        <label>Upload File 1</label>
+                        <input type="file" id="fileSurat1" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                        <small style="color: #888; font-size: 0.75rem;">Maksimal 500KB per file (Wajib untuk preview)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload File 2 (Opsional)</label>
+                        <input type="file" id="fileSurat2" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                    </div>
+                </div>
+                <div class="modal-actions" style="margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Batal</button>
+                    <button type="submit" style="background-color: var(--secondary-color);">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TAMBAH OPSI MODAL (Dinamis) -->
+    <div id="addOptionModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px; padding: 1.5rem;">
+            <div class="modal-header" style="margin-bottom: 15px; padding-bottom: 10px;">
+                <h2 id="addOptionTitle" style="font-size: 1.25rem;">Tambah Data</h2>
+                <button class="close-modal" onclick="closeAddOptionModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label id="addOptionLabel" style="margin-bottom:8px;">Nama Data</label>
+                <input type="text" id="newOptionInput" class="form-control" placeholder="Ketik data baru..." onkeydown="if(event.key === 'Enter') saveNewOption()">
+            </div>
+            <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn-cancel" onclick="closeAddOptionModal()">Batal</button>
+                <button type="button" onclick="saveNewOption()" style="background-color: var(--success-color);">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PREVIEW MODAL -->
+    <div id="previewModal" class="modal-overlay" onclick="if(event.target === this) closePreviewModal()">
+        <div class="modal-content">
+            <div class="preview-header">
+                <h3 id="previewTitle">Pratinjau File</h3>
+                <button class="close-modal" style="color: white;" onclick="closePreviewModal()">&times;</button>
+            </div>
+            <div class="preview-body" id="previewBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast">Notifikasi</div>
+
+    <script>
+        // --- KONFIGURASI & STATE ---
+        const APP_VERSION = 'v2.1';
+        const MAX_FILE_SIZE = 500 * 1024; // 500KB in bytes
+        
+        // Data Utama
+        let mailData = JSON.parse(localStorage.getItem(`suratKeluarApp_${APP_VERSION}_data`)) || [];
+        
+        // Konfigurasi Dropdown Default
+        const defaultJenis = ["Surat Pengantar", "Surat Keterangan", "Surat Peringatan", "Surat Undangan", "Surat Tugas", "Surat Pemberitahuan", "Surat Permohonan"];
+        const defaultTujuan = ["Dinas Pendidikan Kota Mataram", "Kemenag NTB", "Polsek Mataram", "Wali Murid", "Yayasan Pendidikan", "Sekolah Lain"];
+
+        // Load options dari LS atau Default
+        let jenisOptions = JSON.parse(localStorage.getItem(`app_${APP_VERSION}_jenis`)) || defaultJenis;
+        let tujuanOptions = JSON.parse(localStorage.getItem(`app_${APP_VERSION}_tujuan`)) || defaultTujuan;
+
+        let currentAddOptionType = null; // 'jenis' or 'tujuan'
+
+        // --- INISIALISASI ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDate();
+            populateDropdowns();
+            renderTable();
+        });
+
+        function enterApp() {
+            document.getElementById('landingPage').classList.add('slideUp');
+        }
+
+        function updateDate() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('currentDate').innerText = dateStr;
+            document.getElementById('sigDate').innerText = dateStr;
+        }
+
+        function populateDropdowns() {
+            // Populate Jenis Surat
+            const jSelect = document.getElementById('jenisSurat');
+            const currentVal = jSelect.value;
+            jSelect.innerHTML = '<option value="">-- Pilih Jenis --</option>';
+            jenisOptions.forEach(opt => {
+                jSelect.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            jSelect.value = currentVal; // Restore selection if editing
+
+            // Populate Tujuan Surat
+            const tSelect = document.getElementById('tujuanSurat');
+            const currentTujuan = tSelect.value;
+            tSelect.innerHTML = '<option value="">-- Pilih Tujuan --</option>';
+            tujuanOptions.forEach(opt => {
+                tSelect.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            tSelect.value = currentTujuan;
+        }
+
+        // --- MANAJEMEN OPSI (JENIS & TUJUAN) ---
+        function openAddOptionModal(type) {
+            currentAddOptionType = type;
+            const modal = document.getElementById('addOptionModal');
+            const title = document.getElementById('addOptionTitle');
+            const label = document.getElementById('addOptionLabel');
+            const input = document.getElementById('newOptionInput');
+
+            if (type === 'jenis') {
+                title.innerText = "Tambah Jenis Surat";
+                label.innerText = "Nama Jenis Surat";
+            } else {
+                title.innerText = "Tambah Tujuan Surat";
+                label.innerText = "Instansi / Tujuan";
+            }
+            
+            input.value = "";
+            modal.classList.add('open');
+            setTimeout(() => input.focus(), 100);
+        }
+
+        function closeAddOptionModal() {
+            document.getElementById('addOptionModal').classList.remove('open');
+            currentAddOptionType = null;
+        }
+
+        function saveNewOption() {
+            const input = document.getElementById('newOptionInput');
+            const val = input.value.trim();
+            if (!val) {
+                showToast("⚠️ Data tidak boleh kosong");
+                return;
+            }
+
+            if (currentAddOptionType === 'jenis') {
+                if (jenisOptions.includes(val)) {
+                    showToast("⚠️ Jenis ini sudah ada");
+                    return;
+                }
+                jenisOptions.push(val);
+                localStorage.setItem(`app_${APP_VERSION}_jenis`, JSON.stringify(jenisOptions));
+                document.getElementById('jenisSurat').value = val; // Auto select new value
+                showToast("✅ Jenis surat ditambahkan");
+            } else if (currentAddOptionType === 'tujuan') {
+                if (tujuanOptions.includes(val)) {
+                    showToast("⚠️ Tujuan ini sudah ada");
+                    return;
+                }
+                tujuanOptions.push(val);
+                localStorage.setItem(`app_${APP_VERSION}_tujuan`, JSON.stringify(tujuanOptions));
+                document.getElementById('tujuanSurat').value = val; // Auto select new value
+                showToast("✅ Tujuan surat ditambahkan");
+            }
+
+            populateDropdowns(); // Refresh dropdown list
+            closeAddOptionModal();
+        }
+
+        // --- CRUD UTAMA ---
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            if (mailData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 3rem; color: #999; font-weight:500;">Belum ada data surat keluar.<br>Klik tombol "+ Buat Surat Baru" untuk memulai.</td></tr>`;
+                return;
+            }
+
+            mailData.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                const dateStr = new Date(item.tgl).toLocaleDateString('id-ID');
+                
+                // File Display Logic
+                let fileDisplay = `<span style="color:#ccc; font-style:italic;">-</span>`;
+                let printFileText = ``;
+                const files = [
+                    { data: item.file1, type: item.file1Type, name: item.file1Name },
+                    { data: item.file2, type: item.file2Type, name: item.file2Name }
+                ];
+                const fileBadges = [];
+                const printTexts = [];
+
+                files.forEach((f, fIdx) => {
+                    if (f.data) {
+                        let badgeClass = 'img', icon = '🖼️', typeLabel = 'Gambar';
+                        if (f.type && f.type.includes('pdf')) { badgeClass = 'pdf'; icon = '📄'; typeLabel = 'PDF'; }
+                        else if (f.type && (f.type.includes('word') || f.type.includes('document'))) { badgeClass = 'word'; icon = 'W'; typeLabel = 'Word'; }
+
+                        fileBadges.push(`<span class="file-badge ${badgeClass}" onclick="openPreview(${idx}, ${fIdx})">${icon} ${typeLabel}</span>`);
+                        printTexts.push(`${typeLabel}`);
+                    }
+                });
+
+                if (fileBadges.length > 0) {
+                    fileDisplay = fileBadges.join(' ');
+                    printFileText = `<span class="file-print-text">${printTexts.join(', ')}</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td style="font-weight:600; color:var(--primary-color);">${item.no}</td>
+                    <td>${dateStr}</td>
+                    <td><span style="background:#e8f4fd; color:var(--secondary-color); padding:4px 8px; border-radius:4px; font-size:0.8rem; font-weight:600;">${item.jenis}</span></td>
+                    <td>${item.tujuan}</td>
+                    <td style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.perihal}">${item.perihal}</td>
+                    <td style="text-align:center;">${fileDisplay} ${printFileText}</td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editData(${idx})">Edit</button>
+                        <button class="btn-action btn-delete" onclick="deleteData(${idx})">Hapus</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Fungsi Helper untuk File Processing
+        function processFile(fileInput) {
+            return new Promise((resolve, reject) => {
+                const file = fileInput.files[0];
+                if (!file) {
+                    resolve(null);
+                    return;
+                }
+                
+                if (file.size > MAX_FILE_SIZE) {
+                    reject(new Error(`File "${file.name}" terlalu besar! Maksimal 500KB.`));
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = () => resolve({ 
+                    data: reader.result, 
+                    type: file.type, 
+                    name: file.name 
+                });
+                reader.onerror = () => reject(new Error("Gagal membaca file"));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const btnSubmit = e.target.querySelector('button[type="submit"]');
+            const originalText = btnSubmit.innerText;
+            
+            try {
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "Memproses...";
+
+                const idx = parseInt(document.getElementById('editIndex').value);
+                const f1 = await processFile(document.getElementById('fileSurat1'));
+                const f2 = await processFile(document.getElementById('fileSurat2'));
+
+                // Cek kuota localStorage sebelum menyimpan (Estimasi kasar)
+                const newDataString = JSON.stringify({f1, f2});
+                if (newDataString.length > 2000000) { // 2MB safety limit per item
+                    throw new Error("Total ukuran file terlalu besar untuk disimpan di LocalStorage.");
+                }
+
+                const newData = {
+                    no: document.getElementById('nomorSurat').value,
+                    tgl: document.getElementById('tanggalSurat').value,
+                    jenis: document.getElementById('jenisSurat').value,
+                    tujuan: document.getElementById('tujuanSurat').value,
+                    perihal: document.getElementById('perihalSurat').value,
+                    file1: f1 ? f1.data : null,
+                    file1Type: f1 ? f1.type : null,
+                    file1Name: f1 ? f1.name : null,
+                    file2: f2 ? f2.data : null,
+                    file2Type: f2 ? f2.type : null,
+                    file2Name: f2 ? f2.name : null
+                };
+
+                if (idx === -1) {
+                    mailData.push(newData);
+                    // Sort by date descending (newest first)
+                    mailData.sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
+                    showToast("✅ Surat Keluar berhasil disimpan");
+                } else {
+                    const old = mailData[idx];
+                    // Keep old files if no new file uploaded
+                    if (!f1 && old.file1) { newData.file1 = old.file1; newData.file1Type = old.file1Type; newData.file1Name = old.file1Name; }
+                    if (!f2 && old.file2) { newData.file2 = old.file2; newData.file2Type = old.file2Type; newData.file2Name = old.file2Name; }
+                    
+                    mailData[idx] = newData;
+                    showToast("✅ Data berhasil diperbarui");
+                }
+
+                saveToStorage();
+                closeModal();
+                renderTable();
+            } catch (err) {
+                showToast("❌ " + err.message);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = originalText;
+            }
+        }
+
+        function deleteData(idx) {
+            if(confirm("Hapus data surat ini? Tindakan ini tidak dapat dibatalkan.")) {
+                mailData.splice(idx, 1);
+                saveToStorage();
+                renderTable();
+                showToast("🗑️ Data dihapus");
+            }
+        }
+
+        function editData(idx) {
+            const item = mailData[idx];
+            document.getElementById('editIndex').value = idx;
+            document.getElementById('modalTitle').innerText = "Edit Surat Keluar";
+            document.getElementById('nomorSurat').value = item.no;
+            document.getElementById('tanggalSurat').value = item.tgl;
+            
+            populateDropdowns(); 
+            
+            document.getElementById('jenisSurat').value = item.jenis;
+            document.getElementById('tujuanSurat').value = item.tujuan;
+            document.getElementById('perihalSurat').value = item.perihal;
+            
+            // Reset file inputs but show hint that files exist
+            document.getElementById('fileSurat1').value = "";
+            document.getElementById('fileSurat2').value = "";
+            
+            openModal();
+        }
+
+        function saveToStorage() {
+            try {
+                localStorage.setItem(`suratKeluarApp_${APP_VERSION}_data`, JSON.stringify(mailData));
+            } catch (e) {
+                console.error(e);
+                if (e.name === 'QuotaExceededError') {
+                    showToast("❌ Penyimpanan Browser Penuh! Hapus data lama atau gunakan file lebih kecil.");
+                } else {
+                    showToast("❌ Gagal menyimpan data.");
+                }
+            }
+        }
+
+        // --- FITUR BACKUP / IMPORT / RESTORE ---
+        function backupData() {
+            const dataStr = JSON.stringify(mailData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_surat_keluar_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast("💾 Backup didownload");
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const incomingData = JSON.parse(e.target.result);
+                    if (Array.isArray(incomingData)) {
+                        // Mapping fleksibel untuk kompatibilitas versi berbeda
+                        const mappedData = incomingData.map(item => ({
+                            no: item.no || item.nomorSurat, 
+                            tgl: item.tgl || item.tanggalSurat,
+                            jenis: item.jenis || item.jenisSurat, 
+                            tujuan: item.tujuan || item.tujuanSurat,
+                            perihal: item.perihal || item.isiSurat, 
+                            file1: item.file1 || item.gambarBase64,
+                            file1Type: item.file1Type || (item.gambarBase64 ? 'image/jpeg' : null),
+                            file1Name: item.file1Name || (item.gambarBase64 ? 'Lampiran.jpg' : null),
+                            file2: item.file2 || item.gambarBase642, 
+                            file2Type: item.file2Type,
+                            file2Name: item.file2Name
+                        }));
+                        
+                        // Cek kapasitas sebelum merge
+                        const currentSize = JSON.stringify(mailData).length;
+                        const incomingSize = JSON.stringify(mappedData).length;
+                        if (currentSize + incomingSize > 4500000) { // Limit aman localStorage (~5MB)
+                            if(!confirm("Peringatan: Import data ini mungkin melebihi kapasitas penyimpanan browser. Lanjutkan?")) {
+                                input.value = '';
+                                return;
+                            }
+                        }
+
+                        mailData = mailData.concat(mappedData);
+                        mailData.sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
+                        saveToStorage();
+                        renderTable();
+                        showToast(`✅ ${mappedData.length} Data berhasil ditambahkan.`);
+                    } else { showToast("⚠️ Format JSON tidak valid"); }
+                } catch (error) { showToast("❌ Gagal membaca file: " + error.message); }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        function restoreData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (Array.isArray(parsed)) {
+                        if(confirm("PERINGATAN: Ini akan MENIMPA semua data yang ada saat ini dan mengembalikan data dari file ini. Lanjutkan?")) {
+                            mailData = parsed;
+                            mailData.sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
+                            saveToStorage();
+                            renderTable();
+                            showToast("🔄 Sistem berhasil dipulihkan (Restore).");
+                        }
+                    }
+                } catch (err) { showToast("❌ File rusak atau format salah"); }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        // --- PREVIEW & MODAL HELPERS ---
+        function openPreview(dataIdx, fileIdx) {
+            const item = mailData[dataIdx];
+            const dataKey = fileIdx === 0 ? 'file1' : 'file2';
+            const typeKey = fileIdx === 0 ? 'file1Type' : 'file2Type';
+            const nameKey = fileIdx === 0 ? 'file1Name' : 'file2Name';
+            const fileData = item[dataKey];
+            const fileType = item[typeKey];
+            const fileName = item[nameKey] || "Dokumen";
+
+            const modal = document.getElementById('previewModal');
+            const body = document.getElementById('previewBody');
+            const title = document.getElementById('previewTitle');
+            title.innerText = fileName;
+            body.innerHTML = '';
+
+            if (!fileData) return;
+
+            if (fileType && fileType.startsWith('image/')) {
+                const img = document.createElement('img'); 
+                img.src = fileData; 
+                body.appendChild(img);
+            } else if (fileType === 'application/pdf') {
+                // Embed PDF in iframe (Requires base64 support which most modern browsers handle)
+                const iframe = document.createElement('iframe'); 
+                iframe.src = fileData; 
+                body.appendChild(iframe);
+            } else {
+                // Fallback for non-previewable files (Word, etc)
+                const div = document.createElement('div');
+                div.className = 'doc-placeholder';
+                div.innerHTML = `
+                    <span class="doc-icon">📄</span>
+                    <div style="font-weight:bold; margin-bottom:10px; font-size:1.1rem;">${fileName}</div>
+                    <p style="color:#666; margin-bottom:20px;">Format ini tidak bisa dipratinjau langsung di browser.</p>
+                    <a href="${fileData}" download="${fileName}" class="btn-download">Download File</a>
+                `;
+                body.appendChild(div);
+            }
+            modal.classList.add('open');
+        }
+
+        function closePreviewModal() { document.getElementById('previewModal').classList.remove('open'); }
+        
+        function openModal() { document.getElementById('inputModal').classList.add('open'); populateDropdowns(); }
+        
+        function closeModal() {
+            const modal = document.getElementById('inputModal');
+            modal.classList.remove('open');
+            setTimeout(() => {
+                document.getElementById('mailForm').reset();
+                document.getElementById('editIndex').value = "-1";
+                document.getElementById('modalTitle').innerText = "Formulir Surat Keluar";
+            }, 300);
+        }
+        
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.innerText = msg;
+            t.className = "show";
+            setTimeout(() => t.className = t.className.replace("show", ""), 3000);
+        }
+    </script>
+</body>
+</html>
