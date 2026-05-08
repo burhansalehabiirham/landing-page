@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran SMA IT Putri Abu Hurairah Mataram</title>
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- RESET & VARIABLES --- */
+        :root {
+            --primary-color: #00693e; /* Hijau Nuansa Islami/Akademik */
+            --primary-dark: #004d2c;
+            --accent-color: #f1c40f; /* Emas */
+            --text-color: #333;
+            --bg-color: #f4f7f6;
+            --white: #ffffff;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: linear-gradient(rgba(0, 105, 62, 0.1), rgba(0, 105, 62, 0.1));
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* --- HERO / LANDING PAGE (BACKDROP) --- */
+        .landing-container {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .school-logo-placeholder {
+            width: 120px;
+            height: 120px;
+            background: var(--primary-color);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn-open {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-open:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        /* --- MODAL / POP-UP CONTAINER --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 900px; /* Lebar modal */
+            max-height: 90vh;
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        /* Scrollbar khusus modal */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 4px;
+        }
+
+        /* --- MODAL HEADER --- */
+        .modal-header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .modal-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: var(--white);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.4);
+            transform: rotate(90deg);
+        }
+
+        /* --- FORM BODY --- */
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 20px;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            background: #e8f5e9;
+            color: var(--primary-color);
+            padding: 8px;
+            border-radius: 50%;
+            font-size: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 105, 62, 0.1);
+        }
+
+        .small-note {
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 4px;
+        }
+
+        /* --- RADIO BUTTONS (Gender) --- */
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        /* --- FILE UPLOAD STYLING --- */
+        .file-upload-wrapper {
+            position: relative;
+            margin-top: 5px;
+        }
+        
+        .file-upload-label {
+            display: inline-block;
+            background: #f0f0f0;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px dashed #999;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .file-upload-label:hover {
+            background: #e0e0e0;
+            border-color: var(--primary-color);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-name-display {
+            margin-left: 10px;
+            font-size: 0.9rem;
+            font-style: italic;
+            color: var(--primary-color);
+        }
+
+        /* --- MODAL FOOTER --- */
+        .modal-footer {
+            padding: 20px 30px;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+            text-align: right;
+            position: sticky;
+            bottom: 0;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: #666;
+            border: 1px solid #ccc;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 10px;
+        }
+
+        .btn-cancel:hover {
+            background: #eee;
+            color: #333;
+        }
+
+        /* --- TOAST NOTIFICATION --- */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--white);
+            border-left: 5px solid var(--primary-color);
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateX(200%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .toast-content h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .toast-content p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .modal-content { height: 100vh; border-radius: 0; max-height: 100vh; }
+            .modal-body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Halaman Depan (Landing) -->
+    <div class="landing-container" id="landingPage">
+        <div class="">
+            <img src="logo.png">
+            <i class=""></i>
+        </div>
+        <h1>SMA IT Putri Abu Hurairah Mataram</h1>
+        <p class="subtitle">
+            Mewujudkan Generasi Rabbani, Cerdas, dan Berkarakter.<br>
+            Selamat datang di portal pendaftaran peserta didik baru.
+        </p>
+        <button class="btn-open" id="openFormBtn">
+            <i class="fas fa-file-alt"></i> Daftar Sekarang
+        </button>
+    </div>
+
+    <!-- Pop-up Formulir (Modal) -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" id="closeFormBtn" aria-label="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2>Formulir PPDB Online</h2>
+                <p>Silakan lengkapi data diri dengan benar dan jujur.</p>
+            </div>
+
+            <form id="ppdbForm">
+                <div class="modal-body">
+                    
+                    <!-- Section 1: Data Pribadi -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i>
+                            <h3>Data Pribadi Calon Siswa</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="namaLengkap">Nama Lengkap (Sesuai Ijazah)</label>
+                                <input type="text" id="namaLengkap" name="namaLengkap" placeholder="Contoh: Aisyah Humaira" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="nisn">NISN</label>
+                                <input type="number" id="nisn" name="nisn" placeholder="10 digit angka" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="nik">NIK (KTP/KIA)</label>
+                                <input type="number" id="nik" name="nik" placeholder="16 digit angka" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tempatLahir">Tempat Lahir</label>
+                                <input type="text" id="tempatLahir" name="tempatLahir" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tanggalLahir">Tanggal Lahir</label>
+                                <input type="date" id="tanggalLahir" name="tanggalLahir" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="jenisKelamin">Jenis Kelamin</label>
+                                <div class="radio-group">
+                                    <label class="radio-item">
+                                        <input type="radio" name="jenisKelamin" value="Perempuan" checked> Perempuan
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" name="jenisKelamin" value="Laki-laki"> Laki-laki
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="agama">Agama</label>
+                                <select id="agama" name="agama" required>
+                                    <option value="" disabled selected>Pilih Agama</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Kristen">Kristen</option>
+                                    <option value="Katolik">Katolik</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Buddha">Buddha</option>
+                                    <option value="Konghucu">Konghucu</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="noHp">No. WhatsApp Siswa</label>
+                                <input type="tel" id="noHp" name="noHp" placeholder="08xxxxxxxxxx" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Data Sekolah Asal -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h3>Data Sekolah Asal</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="namaSekolah">Nama Sekolah Asal (SMP/MTs)</label>
+                                <input type="text" id="namaSekolah" name="namaSekolah" placeholder="Contoh: SMP Negeri 1 Mataram" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="npsn">NPSN Sekolah Asal</label>
+                                <input type="number" id="npsn" name="npsn">
+                            </div>
+                            <div class="form-group">
+                                <label for="tahunLulus">Tahun Kelulusan</label>
+                                <input type="number" id="tahunLulus" name="tahunLulus" placeholder="2024" value="2024" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="alamatSekolah">Alamat Sekolah Asal</label>
+                                <textarea id="alamatSekolah" name="alamatSekolah" rows="2" placeholder="Jalan, Kota, Provinsi"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Data Orang Tua / Wali -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-users"></i>
+                            <h3>Data Orang Tua / Wali</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="namaAyah">Nama Ayah Kandung</label>
+                                <input type="text" id="namaAyah" name="namaAyah" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pekerjaanAyah">Pekerjaan Ayah</label>
+                                <input type="text" id="pekerjaanAyah" name="pekerjaanAyah" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="namaIbu">Nama Ibu Kandung</label>
+                                <input type="text" id="namaIbu" name="namaIbu" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pekerjaanIbu">Pekerjaan Ibu</label>
+                                <input type="text" id="pekerjaanIbu" name="pekerjaanIbu" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="noHpOrtu">No. WhatsApp Orang Tua</label>
+                                <input type="tel" id="noHpOrtu" name="noHpOrtu" placeholder="08xxxxxxxxxx" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="alamatOrtu">Alamat Lengkap Rumah</label>
+                                <textarea id="alamatOrtu" name="alamatOrtu" rows="3" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Berkas -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-upload"></i>
+                            <h3>Upload Berkas (Opsional untuk Preview)</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Pas Foto Terbaru (3x4)</label>
+                                <div class="file-upload-wrapper">
+                                    <label for="fotoPas" class="file-upload-label">
+                                        <i class="fas fa-camera"></i> Pilih File
+                                    </label>
+                                    <input type="file" id="fotoPas" name="fotoPas" accept="image/*" onchange="updateFileName(this)">
+                                    <span class="file-name-display" id="fileName-fotoPas"></span>
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Scan Kartu Keluarga / Akta</label>
+                                <div class="file-upload-wrapper">
+                                    <label for="docKK" class="file-upload-label">
+                                        <i class="fas fa-file-pdf"></i> Pilih File
+                                    </label>
+                                    <input type="file" id="docKK" name="docKK" accept=".pdf,.jpg,.jpeg,.png" onchange="updateFileName(this)">
+                                    <span class="file-name-display" id="fileName-docKK"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelBtn">Batal</button>
+                    <button type="submit" class="btn-submit">
+                        <link rel="stylesheet" type="text/css" href="https//wa.me/6287757476241">
+                        <i class=""></i> Kirim Pendaftaran
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="successToast">
+        <i class="fas fa-check-circle"></i>
+        <div class="toast-content">
+            <h4>Pendaftaran Berhasil!</h4>
+            <p>Data Anda telah kami terima. Silakan cek WhatsApp untuk info selanjutnya.</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const modalOverlay = document.getElementById('modalOverlay');
+        const openBtn = document.getElementById('openFormBtn');
+        const closeBtn = document.getElementById('closeFormBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const form = document.getElementById('ppdbForm');
+        const toast = document.getElementById('successToast');
+
+        // Fungsi Buka Modal
+        openBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+            // Scroll to top of form when opened
+            document.querySelector('.modal-content').scrollTop = 0;
+        });
+
+        // Fungsi Tutup Modal
+        const closeModal = () => {
+            modalOverlay.classList.remove('active');
+        };
+
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        // Tutup jika klik di luar area konten (overlay gelap)
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        // Fungsi menampilkan nama file yang diupload
+        function updateFileName(input) {
+            const fileNameDisplay = document.getElementById('fileName-' + input.id);
+            if (input.files && input.files.length > 0) {
+                fileNameDisplay.textContent = input.files[0].name;
+            } else {
+                fileNameDisplay.textContent = '';
+            }
+        }
+
+        // Handle Submit Form
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Mencegah reload halaman
+            
+            // Simulasi proses loading (opsional)
+            const submitBtn = document.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            submitBtn.disabled = true;
+
+            // Simulasi delay server
+            setTimeout(() => {
+                // Tampilkan Toast Sukses
+                showToast();
+
+                // Reset Form
+                form.reset();
+                document.querySelectorAll('.file-name-display').forEach(el => el.textContent = '');
+                
+                // Kembalikan tombol
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Tutup Modal
+                closeModal();
+            }, 1500);
+        });
+
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000); // Hilang setelah 4 detik
+        }
+    </script>
+</body>
+</html>

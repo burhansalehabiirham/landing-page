@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran SMA IT Putri Abuhurairah Mataram</title>
+    <meta name="description" content="Portal resmi pendaftaran peserta didik baru SMA IT Putri Abuhurairah Mataram. Download template dokumen dan informasi lengkap.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            /* Warna Identitas: Hijau Pendidikan, Emas, Putih */
+            --primary-color: #047857; /* Emerald Green */
+            --primary-dark: #064e3b;
+            --accent-color: #d97706; /* Gold/Amber */
+            --accent-light: #fef3c7;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --bg-body: #f8fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            
+            --max-width: 1200px;
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--primary-dark);
+        }
+
+        .arabic-text {
+            font-family: 'Amiri', serif;
+            color: var(--accent-color);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: var(--bg-white);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary-dark);
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .cta-btn-nav {
+            background-color: var(--primary-color);
+            color: white !important;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .cta-btn-nav:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            cursor: pointer;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            position: relative;
+            background: linear-gradient(rgba(4, 120, 87, 0.9), rgba(6, 78, 59, 0.95)), url('https://picsum.photos/seed/school/1600/900');
+            background-size: cover;
+            background-position: center;
+            padding: 6rem 0;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn-hero {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-hero:hover {
+            background-color: #b45309;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* --- INFO CARDS --- */
+        .info-section {
+            padding: 5rem 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .info-card {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            border-top: 4px solid var(--primary-color);
+            transition: 0.3s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .info-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--accent-light);
+            color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .info-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .info-card ul {
+            text-align: left;
+            padding-left: 1rem;
+        }
+        
+        .info-card ul li {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+        
+        .info-card ul li::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-right: 8px;
+        }
+
+        /* --- TEMPLATE DOWNLOAD SECTION --- */
+        .template-section {
+            background-color: white;
+            padding: 5rem 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .download-card {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            color: #dc2626; /* PDF Color */
+        }
+        
+        .file-icon.word { color: #2563eb; }
+        .file-icon.excel { color: #16a34a; }
+
+        .file-info h4 {
+            font-size: 1rem;
+            color: var(--text-main);
+            margin-bottom: 0.2rem;
+        }
+
+        .file-info span {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            background: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: white;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-download:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-col h3 {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-col p, .footer-col a {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 0.8rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .footer-col a:hover {
+            color: var(--accent-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* Hide for mobile simplicity in this static demo */
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .hero {
+                padding: 4rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <div>
+                    <span style="display:block; line-height:1.1;">SMA IT PUTRI</span>
+                    <span style="display:block; font-size:0.8em; font-weight:600; color:var(--text-light);">ABUHURAIRAH MATARAM</span>
+                </div>
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#">Beranda</a></li>
+                    <li><a href="#">Profil</a></li>
+                    <li><a href="#" class="active">Informasi PSB</a></li>
+                    <li><a href="#">Kontak</a></li>
+                </ul>
+            </nav>
+
+            <div class="mobile-actions" style="display: flex; gap: 15px; align-items: center;">
+                <a href="Daftar Online.html" class="cta-btn-nav">Daftar Sekarang</a>
+                <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container hero-content">
+                <p class="arabic-text" style="font-size: 1.2rem; margin-bottom: 1rem;">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</p>
+                <h1>Mencetak Generasi Rabbani Berwawasan Nasional</h1>
+                <p>Selamat datang di portal resmi Penerimaan Peserta Didik Baru (PPDB) SMA IT Putri Abuhurairah Mataram. Siapkan diri Anda menjadi bagian dari peradaban ilmu yang unggul.</p>
+                <a href="#templates" class="btn-hero">
+                    <i class="fa-solid fa-file-arrow-down"></i> Download Dokumen
+                </a>
+            </div>
+        </section>
+
+        <!-- Alur & Syarat -->
+        <section class="info-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Informasi Pendaftaran</h2>
+                    <p>Pahami alur dan siapkan dokumen persyaratan sebelum melakukan registrasi.</p>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                        <h3>Syarat Umum</h3>
+                        <ul>
+                            <li>Lulusan SMP/MTs sederajat.</li>
+                            <li>Usia maksimal 21 tahun.</li>
+                            <li>Sehat jasmani dan rohani.</li>
+                            <li>Berkelakuan baik (SKCK).</li>
+                        </ul>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-file-contract"></i></div>
+                        <h3>Berkas Administrasi</h3>
+                        <ul>
+                            <li>Legalisir Ijazah/SKL.</li>
+                            <li>Scan Kartu Keluarga (KK).</li>
+                            <li>Scan Akta Kelahiran.</li>
+                            <li>Pas Foto 3x4 (Latar Merah).</li>
+                        </ul>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                        <h3>Alur Pendaftaran</h3>
+                        <ul>
+                            <li>Isi Formulir Online.</li>
+                            <li>Upload Berkas di Portal.</li>
+                            <li>Tes Seleksi Akademik.</li>
+                            <li>Wawancara & Tes Baca Al-Qur'an.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Template Download Section -->
+        <section class="template-section" id="templates">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Template Dokumen Pendaftaran</h2>
+                    <p>Unduh template berikut untuk mempermudah pengisian data administrasi calon siswi.</p>
+                </div>
+
+                <div class="download-grid">
+                    <!-- Card 1 -->
+                    <div class="download-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-file-pdf file-icon"></i>
+                            <div class="file-info">
+                                <h4>Formulir Data Diri</h4>
+                                <span>PDF - 250 KB</span>
+                            </div>
+                        </div>
+                        <p class="card-desc">Template formulir isian data diri calon siswi yang harus dicetak dan ditandatangani orang tua.</p>
+                        <button class="btn-download" onclick="simulateDownload('Formulir Data Diri')">
+                            <i class="fa-solid fa-download"></i> Unduh File
+                        </button>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="download-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-file-word file-icon word"></i>
+                            <div class="file-info">
+                                <h4>Surat Pernyataan Siswa</h4>
+                                <span>DOCX - 120 KB</span>
+                            </div>
+                        </div>
+                        <p class="card-desc">Draft surat pernyataan sanggup mematuhi tata tertib sekolah dan aturan berpakaian syar'i.</p>
+                        <button class="btn-download" onclick="simulateDownload('Surat Pernyataan Siswa')">
+                            <i class="fa-solid fa-download"></i> Unduh File
+                        </button>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="download-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-file-pdf file-icon"></i>
+                            <div class="file-info">
+                                <h4>Panduan Upload Berkas</h4>
+                                <span>PDF - 1.5 MB</span>
+                            </div>
+                        </div>
+                        <p class="card-desc">Panduan teknis cara mengunggah berkas ke sistem OSPMB SMA IT Putri Abuhurairah.</p>
+                        <button class="btn-download" onclick="simulateDownload('Panduan Upload Berkas')">
+                            <i class="fa-solid fa-download"></i> Unduh File
+                        </button>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="download-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-file-excel file-icon excel"></i>
+                            <div class="file-info">
+                                <h4>Cek Kesehatan Awal</h4>
+                                <span>XLSX - 50 KB</span>
+                            </div>
+                        </div>
+                        <p class="card-desc">Format Excel sederhana untuk data riwayat kesehatan yang wajib diisi orang tua/wali.</p>
+                        <button class="btn-download" onclick="simulateDownload('Cek Kesehatan Awal')">
+                            <i class="fa-solid fa-download"></i> Unduh File
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section style="background: var(--primary-color); padding: 4rem 0; text-align: center; color: white;">
+            <div class="container">
+                <h2 style="color: white; margin-bottom: 1rem;">Sudah Menyiapkan Semua Berkas?</h2>
+                <p style="margin-bottom: 2rem; opacity: 0.9;">Silakan lakukan pendaftaran melalui portal daring kami segera.</p>
+                <a href="#" class="cta-btn-nav" style="background: white; color: var(--primary-color) !important; padding: 1rem 3rem;">
+                    Daftar Akun OSPMB
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo" style="margin-bottom: 1rem;">
+                        <i class="fa-solid fa-graduation-cap" style="color: var(--accent-color);"></i>
+                        <span style="color:white;">SMA IT Putri</span>
+                    </div>
+                    <p>Membangun karakter Islami yang kuat, prestasi akademik unggul, dan berjiwa kepemimpinan nasional.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Tautan Cepat</h3>
+                    <a href="#">Profil Sekolah</a>
+                    <a href="#">Kurikulum</a>
+                    <a href="#">Ekstrakurikuler</a>
+                    <a href="#">Berita & Artikel</a>
+                </div>
+                <div class="footer-col">
+                    <h3>Hubungi Kami</h3>
+                    <p><i class="fa-solid fa-location-dot" style="width:20px"></i> Jl. Pendidikan No. 123, Mataram, NTB</p>
+                    <p><i class="fa-solid fa-phone" style="width:20px"></i> (0370) 123-4567</p>
+                    <p><i class="fa-solid fa-envelope" style="width:20px"></i> psb@smaitabuhurairah.sch.id</p>
+                    <p><i class="fa-solid fa-clock" style="width:20px"></i> Senin - Jumat (08:00 - 15:00)</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 SMA IT Putri Abuhurairah Mataram. Hak Cipta Dilindungi.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Simple Script for Interaction Feedback -->
+    <script>
+        function simulateDownload(fileName) {
+            // visual feedback instead of alert
+            const btn = event.currentTarget;
+            const originalContent = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengunduh...';
+            btn.style.opacity = "0.7";
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Selesai';
+                btn.style.backgroundColor = "var(--primary-dark)";
+                btn.style.borderColor = "var(--primary-dark)";
+                btn.style.color = "white";
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.style.opacity = "1";
+                    btn.style.backgroundColor = "";
+                    btn.style.borderColor = "";
+                    btn.style.color = "";
+                }, 2000);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
