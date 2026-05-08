@@ -662,10 +662,10 @@
                 <li class="nav-item">
                     <a href="#" class="nav-link">Pendaftaran <i class="fas fa-chevron-down"></i></a>
                     <ul class="dropdown">
-                        <li><a href="Registrasi Masuk.html">Registrasi Masuk</a></li>
-                        <li><a href="Registrasi Online">Registrasi Online</a></li>
-                        <li><a href="#">Formulir Pendaftaran</a></li>
-                        <li><a href="#">Informasi Lebih Lanjut</a></li>
+                        <li><a href="Kelengkapan Berkas Awal.html">Kelengkapan Berkas Awal</a></li>
+                        <li><a href="Registrasi Online.html">Registrasi Online</a></li>
+                        <li><a href="Surat Masuk Baru">Surat Masuk</a></li>
+                        <li><a href="Surat Keluar Baru.html">Surat Keluar</a></li>
                     </ul>
                 </li>
 
