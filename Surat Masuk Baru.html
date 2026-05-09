@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Surat Masuk - Laporan Realtime Pro</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --info-color: #16a085;
+            --bg-color: #f4f6f9;
+            --text-color: #333;
+            --border-color: #ddd;
+            --white: #ffffff;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-placeholder {
+            width: 50px; height: 50px; background: var(--white); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: var(--primary-color); font-size: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .app-title h1 { margin: 0; font-size: 1.4rem; line-height: 1.2; }
+        .app-title p { margin: 0; opacity: 0.9; font-size: 0.85rem; letter-spacing: 0.5px; }
+
+        /* --- Search Bar Styles --- */
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .search-select {
+            background: var(--white);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-input {
+            padding: 8px 10px;
+            border: none;
+            border-radius: 4px;
+            width: 200px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: width 0.3s;
+        }
+        .search-input:focus { width: 250px; box-shadow: 0 0 0 2px rgba(255,255,255,0.5); }
+        
+        /* --- Main Content --- */
+        main { padding: 2rem; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+            justify-content: space-between; align-items: center;
+            background: white; padding: 15px; border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        
+        button {
+            padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;
+            font-size: 0.9rem; transition: all 0.3s ease; color: white;
+            display: inline-flex; align-items: center; gap: 5px; font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button:active { transform: translateY(1px); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-add { background-color: var(--secondary-color); }
+        .btn-add:hover { background-color: #2980b9; }
+        .btn-print { background-color: var(--success-color); }
+        .btn-print:hover { background-color: #219150; }
+        .btn-info { background-color: var(--info-color); }
+        .btn-backup { background-color: var(--warning-color); }
+        .btn-restore { background-color: #8e44ad; }
+
+        /* --- Table Report --- */
+        .report-header {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 10px; border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 5px;
+        }
+        .report-title { font-size: 1.3rem; font-weight: bold; color: var(--primary-color); }
+        .last-update { font-size: 0.85rem; color: #666; font-style: italic; }
+
+        .table-container {
+            background: var(--white); border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow-x: auto;
+            margin-bottom: 2rem; border: 1px solid var(--border-color);
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 1200px; }
+        
+        th, td {
+            padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--border-color);
+            vertical-align: middle; font-size: 0.9rem;
+        }
+
+        th {
+            background-color: var(--primary-color); color: var(--white);
+            white-space: nowrap; font-weight: 600; letter-spacing: 0.5px;
+        }
+
+        tr:hover { background-color: #f1f7fb; }
+        tr:nth-child(even) { background-color: #fafafa; }
+        tr:nth-child(even):hover { background-color: #f1f7fb; }
+
+        .img-btn {
+            background: white; color: var(--secondary-color); border: 1px solid var(--secondary-color);
+            padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; margin-right: 2px;
+            cursor: pointer; transition: all 0.2s; display: block; margin-bottom: 2px;
+            width: 100%;
+        }
+        .img-btn:hover { background: var(--secondary-color); color: white; }
+
+        .btn-action { font-size: 0.75rem; padding: 5px 10px; margin-right: 3px; color: white; border: none; border-radius: 4px; }
+        .btn-edit { background-color: var(--warning-color); }
+        .btn-edit:hover { background-color: #d35400; }
+        .btn-delete { background-color: var(--accent-color); }
+        .btn-delete:hover { background-color: #c0392b; }
+
+        /* --- Signature --- */
+        .signature-section {
+            display: flex; justify-content: flex-end; margin-top: 30px; margin-bottom: 50px; padding-right: 50px;
+        }
+        .sig-block { text-align: center; width: 250px; }
+        .sig-name { margin-top: 70px; font-weight: bold; text-decoration: underline; }
+
+        /* --- Footer --- */
+        .doc-footer {
+            margin-top: auto; border-top: 2px solid var(--primary-color);
+            padding: 10px 20px; display: flex; justify-content: space-between;
+            font-size: 0.85rem; color: #555; background: #fff;
+        }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { display: flex; opacity: 1; }
+
+        .modal-content {
+            background: var(--white); padding: 2rem; border-radius: 12px;
+            width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3); position: relative;
+            transform: translateY(-20px); transition: transform 0.3s ease;
+        }
+        .modal-overlay.show .modal-content { transform: translateY(0); }
+        .modal-content.large { max-width: 800px; }
+
+        .close-modal {
+            position: absolute; top: 15px; right: 20px; font-size: 28px;
+            cursor: pointer; color: #aaa; transition: color 0.2s; line-height: 1;
+        }
+        .close-modal:hover { color: var(--accent-color); }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: var(--primary-color); }
+        
+        /* Custom Dropdown Group Styling */
+        .input-group-wrapper {
+            display: flex; gap: 5px; align-items: stretch;
+        }
+        .input-group-wrapper .form-control { flex: 1; }
+        .btn-mini { 
+            padding: 0 12px; font-size: 1.2rem; line-height: 1; 
+            display: flex; align-items: center; justify-content: center;
+            min-width: 40px;
+        }
+        .btn-plus { background-color: var(--secondary-color); }
+        .btn-plus:hover { background-color: #2980b9; }
+        .btn-minus { background-color: var(--accent-color); }
+        .btn-minus:hover { background-color: #c0392b; }
+
+        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; transition: border 0.3s; font-size: 0.95rem;}
+        .form-control:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+        textarea.form-control { resize: vertical; height: 80px; }
+
+        .info-box {
+            background-color: #e8f8f5; border-left: 5px solid var(--info-color);
+            padding: 15px; margin-top: 15px; font-size: 0.95rem; line-height: 1.6; border-radius: 0 4px 4px 0;
+        }
+
+        /* --- Toast Notification --- */
+        #toast {
+            visibility: hidden; min-width: 300px; background-color: #333; color: #fff;
+            text-align: center; border-radius: 8px; padding: 16px; position: fixed;
+            z-index: 1001; left: 50%; bottom: 30px; transform: translateX(-50%) translateY(20px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-weight: 500; opacity: 0; transition: all 0.4s ease;
+        }
+        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+        #toast.success { background-color: var(--success-color); }
+        #toast.error { background-color: var(--accent-color); }
+        #toast.info { background-color: var(--info-color); }
+
+        /* --- Print Styles --- */
+        @media print {
+            @page { size: A4 landscape; margin: 10mm; }
+            body { background: white; color: black; -webkit-print-color-adjust: exact; }
+            header, .controls, .modal-overlay, #restoreInput, .img-btn, .doc-footer, .last-update, .btn-action, .search-container {
+                display: none !important;
+            }
+            /* Tampilkan header minimal saat print */
+            header { display: block !important; padding: 0; margin-bottom: 20px; border: none; box-shadow: none; background: transparent; color: black; }
+            .logo-placeholder { border: 2px solid black; color: black; background: transparent; width: 40px; height: 40px; font-size: 20px; }
+
+            main { padding: 0; margin: 0; max-width: 100%; }
+            .table-container { box-shadow: none; margin-bottom: 20px; border: 1px solid #000; }
+            table { width: 100%; border: 1px solid black; font-size: 10pt; }
+            tr { page-break-inside: avoid; }
+            th, td { border: 1px solid black; padding: 6px; vertical-align: middle; color: #000; }
+            th { background-color: #ddd !important; font-weight: bold; text-align: center; }
+            th:last-child, td:last-child { display: none; } /* Hide Aksi column */
+            
+            /* Ubah tampilan kolom gambar saat print */
+            td:nth-child(8)::before { content: "Lihat Digital"; font-style: italic; font-size: 0.8em; }
+            td:nth-child(8) div { display: none; }
+
+            .signature-section { position: absolute; bottom: 40px; right: 20px; margin: 0; }
+            .web-only { display: none; }
+            .print-only { display: block !important; font-weight: bold; text-align: center; }
+        }
+
+        /* Helper Classes */
+        .print-only { display: none; }
+        .web-only { display: block; }
+
+        /* Responsive Search for Mobile */
+        @media (max-width: 768px) {
+            header { flex-direction: column; align-items: stretch; }
+            .search-container { width: 100%; justify-content: space-between; }
+            .search-input { width: 100%; }
+            .search-input:focus { width: 100%; }
+            .search-select { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-area">
+            <div class="logo-placeholder">IT</div>
+            <div class="app-title">
+                <h1>SMA IT Putri</h1>
+                <p>Aplikasi Database Surat Masuk</p>
+            </div>
+        </div>
+
+        <!-- MENU PENCARIAN -->
+        <div class="search-container">
+            <select id="searchFilter" class="search-select" onchange="updateSearchInputType()">
+                <option value="all">Semua</option>
+                <option value="nomorSurat">Nomor Surat</option>
+                <option value="suratDari">Surat Dari</option>
+                <option value="keperluan">Keperluan</option>
+                <option value="tujuanSurat">Tujuan Surat</option>
+            </select>
+            <div class="search-input-wrapper">
+                <!-- Input akan berubah menjadi select jika kategori dipilih -->
+                <input type="text" id="searchInput" class="search-input" placeholder="Ketik kata kunci..." onkeyup="handleSearch()">
+            </div>
+        </div>
+
+        <div id="currentDate" style="font-size:0.9rem; font-weight:500; white-space: nowrap;"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Menu Kontrol -->
+        <div class="controls">
+            <div class="btn-group">
+                <button class="btn-add" onclick="openModal()">+ Input Data Baru</button>
+                <button class="btn-print" onclick="window.print()">Cetak Laporan</button>
+                <button class="btn-info" onclick="openExcelInfo()">Lihat Panduan Excel</button>
+            </div>
+            <div class="btn-group">
+                <input type="file" id="restoreInput" style="display: none;" onchange="restoreData(this)" accept=".json">
+                <button class="btn-backup" onclick="backupData()">Backup Data (JSON)</button>
+                <button class="btn-restore" onclick="document.getElementById('restoreInput').click()">Restore Data</button>
+            </div>
+        </div>
+
+        <!-- Tabel Laporan -->
+        <div class="report-header">
+            <div class="report-title">Laporan Data Surat Masuk</div>
+            <div class="last-update" id="lastUpdated">Status: Siap</div>
+        </div>
+
+        <div class="table-container">
+            <table id="mailTable">
+                <thead>
+                    <tr>
+                        <th style="width: 40px; text-align: center;">No</th>
+                        <th style="width: 110px;">Nomor Surat</th>
+                        <th style="width: 100px;">Tgl Surat</th>
+                        <th style="width: 150px;">Surat Dari</th>
+                        <th style="width: 100px;">Keperluan</th>
+                        <th style="width: 120px;">Tujuan Surat</th>
+                        <th>Isi Ringkas</th>
+                        <th style="width: 90px;">Gambar</th>
+                        <th style="width: 110px; text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data muncul disini -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tanda Tangan -->
+        <div class="signature-section">
+            <div class="sig-block">
+                <div>Mataram, <span id="sigDate"></span></div>
+                <div style="margin-top:5px; font-weight:bold; text-decoration:underline;">Kepala Sekolah</div>
+                <div class="sig-name">Gunawan Trianto, M.Pd</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Dokumen -->
+    <footer class="doc-footer">
+        <div>PAH-KSP-FORM-22-01</div>
+        <div>Rev. 01/10 September 2025</div>
+        <div>Hal. 1 dari 1</div>
+    </footer>
+
+    <!-- Modal Input Data Surat -->
+    <div id="inputModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 style="margin-bottom:15px; border-bottom: 1px solid #eee; padding-bottom:10px;" id="modalTitle">Input Data Surat</h2>
+            <form id="mailForm" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="editIndex" value="-1">
+                
+                <div class="form-group"><label>Nomor Surat</label><input type="text" id="nomorSurat" class="form-control" required placeholder="Contoh: 421/102/SMAIT/2023"></div>
+                <div class="form-group"><label>Tanggal Surat</label><input type="date" id="tanggalSurat" class="form-control" required></div>
+                
+                <!-- Surat Dari Dengan Tombol + dan - -->
+                <div class="form-group">
+                    <label>Surat Dari</label>
+                    <div class="input-group-wrapper">
+                        <select id="suratDari" class="form-control" required>
+                            <option value="">-- Pilih Instansi --</option>
+                        </select>
+                        <button type="button" class="btn-plus btn-mini" onclick="openOptionModal('suratDari')" title="Tambah Baru">+</button>
+                        <button type="button" class="btn-minus btn-mini" onclick="removeOption('suratDari')" title="Hapus Terpilih">-</button>
+                    </div>
+                </div>
+
+                <!-- Keperluan Dengan Tombol + dan - -->
+                <div class="form-group">
+                    <label>Keperluan</label>
+                    <div class="input-group-wrapper">
+                        <select id="keperluan" class="form-control" required>
+                            <option value="">-- Pilih Keperluan --</option>
+                        </select>
+                        <button type="button" class="btn-plus btn-mini" onclick="openOptionModal('keperluan')" title="Tambah Baru">+</button>
+                        <button type="button" class="btn-minus btn-mini" onclick="removeOption('keperluan')" title="Hapus Terpilih">-</button>
+                    </div>
+                </div>
+
+                <!-- Tujuan Surat Dengan Tombol + dan - -->
+                <div class="form-group">
+                    <label>Tujuan Surat (Yth)</label>
+                    <div class="input-group-wrapper">
+                        <select id="tujuanSurat" class="form-control" required>
+                            <option value="">-- Pilih Tujuan --</option>
+                        </select>
+                        <button type="button" class="btn-plus btn-mini" onclick="openOptionModal('tujuanSurat')" title="Tambah Baru">+</button>
+                        <button type="button" class="btn-minus btn-mini" onclick="removeOption('tujuanSurat')" title="Hapus Terpilih">-</button>
+                    </div>
+                </div>
+
+                <div class="form-group"><label>Isi Ringkas</label><textarea id="isiSurat" class="form-control" placeholder="Ringkasan isi surat..."></textarea></div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Upload Gambar 1</label>
+                        <input type="file" id="gambar1" class="form-control" accept="image/*">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Upload Gambar 2</label>
+                        <input type="file" id="gambar2" class="form-control" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top:25px; text-align:right; border-top: 1px solid #eee; padding-top: 15px;">
+                    <button type="button" onclick="closeModal()" style="background:#95a5a6; display:inline-flex;">Batal</button>
+                    <button type="submit" style="background:var(--secondary-color); display:inline-flex;">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Opsi (Popup) -->
+    <div id="optionModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close-modal" onclick="closeOptionModal()">&times;</span>
+            <h3 style="margin-bottom:15px; color:var(--primary-color);">Tambah Data Baru</h3>
+            <p id="optionModalLabel" style="margin-bottom:10px; color:#666; font-size:0.9rem;"></p>
+            <form onsubmit="handleAddOption(event)">
+                <input type="hidden" id="targetSelectId">
+                <div class="form-group">
+                    <input type="text" id="newOptionText" class="form-control" required placeholder="Ketik nama data baru..." autofocus>
+                </div>
+                <div style="text-align:right;">
+                    <button type="submit" class="btn-add" style="width:100%; justify-content:center;">Simpan Opsi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Info Excel -->
+    <div id="excelInfoModal" class="modal-overlay">
+        <div class="modal-content large">
+            <span class="close-modal" onclick="closeExcelInfo()">&times;</span>
+            <h2 style="margin-bottom: 15px; color: var(--info-color);">Panduan Laporan & Export Excel</h2>
+            <p>Data yang muncul di laporan tersimpan permanen dalam format JSON di browser Anda.</p>
+            <div class="info-box">
+                <strong>Langkah-langkah Impor JSON ke Excel:</strong><br>
+                Anda dapat membuka file backup (.json) menggunakan Excel modern yang mendukung Power Query.
+            </div>
+            <div style="margin-top: 20px;">
+                <ol style="margin-left: 20px; line-height: 1.8;">
+                    <li>Klik tombol <strong>"Backup Data (JSON)"</strong> untuk mengunduh database.</li>
+                    <li>Buka Microsoft Excel > Tab <strong>Data</strong>.</li>
+                    <li>Klik <strong>Get Data</strong> > <strong>From File</strong> > <strong>From JSON</strong>.</li>
+                    <li>Pilih file backup yang diunduh tadi.</li>
+                    <li>Lalu klik <strong>Load</strong> untuk melihat data di dalam Excel.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Preview Gambar -->
+    <div id="imageModal" class="modal-overlay" onclick="closeImageModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()" style="background:white; padding:10px; border-radius:10px; max-width:90%; max-height:90vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <span class="close-modal" onclick="closeImageModal()" style="top:10px; right:10px; z-index:10;">&times;</span>
+            <img id="previewImgSource" src="" alt="Preview" style="max-width:100%; height:auto; border-radius:5px; max-height: 80vh; object-fit:contain;">
+        </div>
+    </div>
+
+    <!-- Toast Element -->
+    <div id="toast">Pesan notifikasi</div>
+
+    <script>
+        // --- KONFIGURASI DATABASE ---
+        const DB_KEY = 'suratMasuk_db_permanent_v7';
+        const OPT_KEY = 'suratMasuk_options_v7';
+        
+        // Default Data Opsi Dropdown
+        const defaultOptions = {
+            suratDari: ["Universitas Terbuka", "Universitas Mataram", "Universitas Al Azhar", "Universitas Kairo", "Kementerian Agama", "UIN Mataram", "Fakultas Teknik Mataram", "Dinas Pendidikan", "Polres Mataram"],
+            keperluan: ["Observasi", "Penelitian", "Pemantauan", "Penyelidikan", "Kerjasama", "Undangan", "Dinas", "Pemberitahuan"],
+            tujuanSurat: ["Kepsek SMA IT Putri", "Wakasek Kurikulum", "Wakasek Kesiswaan", "Wakasek Sarana", "TU SMA IT Putri"]
+        };
+
+        let mailData = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        
+        // Load Opsi dari LocalStorage atau Gunakan Default
+        let savedOptions = JSON.parse(localStorage.getItem(OPT_KEY));
+        let currentOptions = savedOptions ? savedOptions : JSON.parse(JSON.stringify(defaultOptions));
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            updateDate();
+            populateDropdowns(); // Inisialisasi Dropdown saat load
+        });
+
+        function updateDate() {
+            const today = new Date();
+            const str = today.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('currentDate').innerText = str;
+            document.getElementById('sigDate').innerText = str;
+        }
+
+        function updateLastModified() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('lastUpdated').innerText = `Terakhir diperbarui: Pukul ${time}`;
+        }
+
+        // --- FITUR PENCARIAN (SEARCH) ---
+        
+        function updateSearchInputType() {
+            const filterType = document.getElementById('searchFilter').value;
+            const wrapper = document.getElementById('searchInput').parentElement;
+            
+            // Hapus elemen input lama
+            wrapper.innerHTML = '';
+
+            let inputElement;
+
+            if (filterType === 'all' || filterType === 'nomorSurat' || filterType === 'isiSurat') {
+                // Input Text Biasa
+                inputElement = document.createElement('input');
+                inputElement.type = 'text';
+                inputElement.id = 'searchInput';
+                inputElement.className = 'search-input';
+                inputElement.placeholder = filterType === 'all' ? 'Ketik kata kunci...' : 'Ketik ' + filterType + '...';
+                inputElement.onkeyup = handleSearch;
+            } else {
+                // Input Dropdown untuk kategori spesifik agar akurat
+                inputElement = document.createElement('select');
+                inputElement.id = 'searchInput';
+                inputElement.className = 'search-input'; // Pakai style sama
+                inputElement.innerHTML = '<option value="">-- Semua --</option>';
+                
+                // Ambil opsi dari array currentOptions
+                if (currentOptions[filterType]) {
+                    currentOptions[filterType].sort().forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt;
+                        option.innerText = opt;
+                        inputElement.appendChild(option);
+                    });
+                }
+                inputElement.onchange = handleSearch; // Gunakan onchange untuk select
+            }
+
+            wrapper.appendChild(inputElement);
+            // Focus otomatis ke elemen baru
+            setTimeout(() => inputElement.focus(), 50);
+        }
+
+        function handleSearch() {
+            const filterType = document.getElementById('searchFilter').value;
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filteredData = mailData.filter(item => {
+                if (!searchValue) return true;
+
+                if (filterType === 'all') {
+                    // Cari di semua kolom string
+                    return (item.nomorSurat.toLowerCase().includes(searchValue) ||
+                            item.suratDari.toLowerCase().includes(searchValue) ||
+                            item.keperluan.toLowerCase().includes(searchValue) ||
+                            item.tujuanSurat.toLowerCase().includes(searchValue) ||
+                            (item.isiSurat && item.isiSurat.toLowerCase().includes(searchValue)));
+                } else {
+                    // Cari di kolom spesifik
+                    const itemValue = item[filterType] ? item[filterType].toLowerCase() : "";
+                    return itemValue.includes(searchValue);
+                }
+            });
+
+            renderTable(filteredData);
+        }
+
+
+        // --- MANAJEMEN DROPDOWN (+ / -) ---
+        
+        function populateDropdowns() {
+            // Populate Surat Dari
+            const selDari = document.getElementById('suratDari');
+            const valDari = selDari.value;
+            selDari.innerHTML = '<option value="">-- Pilih Instansi --</option>';
+            // Sort options agar rapi
+            currentOptions.suratDari.sort().forEach(opt => {
+                selDari.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            selDari.value = valDari;
+
+            // Populate Keperluan
+            const selKeperluan = document.getElementById('keperluan');
+            const valKeperluan = selKeperluan.value;
+            selKeperluan.innerHTML = '<option value="">-- Pilih Keperluan --</option>';
+            currentOptions.keperluan.sort().forEach(opt => {
+                selKeperluan.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            selKeperluan.value = valKeperluan;
+
+            // Populate Tujuan
+            const selTujuan = document.getElementById('tujuanSurat');
+            const valTujuan = selTujuan.value;
+            selTujuan.innerHTML = '<option value="">-- Pilih Tujuan --</option>';
+            currentOptions.tujuanSurat.sort().forEach(opt => {
+                selTujuan.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            selTujuan.value = valTujuan;
+        }
+
+        // Buka Modal Tambah Opsi
+        function openOptionModal(targetId) {
+            document.getElementById('targetSelectId').value = targetId;
+            const labelMap = {
+                'suratDari': 'Nama Instansi (Surat Dari)',
+                'keperluan': 'Jenis Keperluan',
+                'tujuanSurat': 'Tujuan Surat (Yth)'
+            };
+            document.getElementById('optionModalLabel').innerText = "Menambahkan ke kategori: " + labelMap[targetId];
+            document.getElementById('newOptionText').value = "";
+            
+            const modal = document.getElementById('optionModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+            setTimeout(() => document.getElementById('newOptionText').focus(), 100);
+        }
+
+        function closeOptionModal() {
+            const modal = document.getElementById('optionModal');
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        // Handle Simpan Opsi Baru
+        function handleAddOption(e) {
+            e.preventDefault();
+            const targetId = document.getElementById('targetSelectId').value;
+            const newVal = document.getElementById('newOptionText').value.trim();
+
+            if(newVal) {
+                if(!currentOptions[targetId].includes(newVal)) {
+                    currentOptions[targetId].push(newVal);
+                    localStorage.setItem(OPT_KEY, JSON.stringify(currentOptions));
+                    populateDropdowns();
+                    
+                    // Set nilai baru ke dropdown yang bersangkutan
+                    document.getElementById(targetId).value = newVal;
+                    
+                    showToast("Data berhasil ditambahkan ke daftar!", "success");
+                    closeOptionModal();
+                } else {
+                    showToast("Data ini sudah ada di daftar.", "error");
+                }
+            }
+        }
+
+        // Handle Hapus Opsi
+        function removeOption(targetId) {
+            const selectEl = document.getElementById(targetId);
+            const selectedVal = selectEl.value;
+
+            if(!selectedVal) {
+                showToast("Pilih data yang ingin dihapus terlebih dahulu.", "info");
+                return;
+            }
+
+            if(confirm(`Hapus pilihan "${selectedVal}" dari daftar?`)) {
+                currentOptions[targetId] = currentOptions[targetId].filter(item => item !== selectedVal);
+                localStorage.setItem(OPT_KEY, JSON.stringify(currentOptions));
+                populateDropdowns();
+                showToast("Data berhasil dihapus dari daftar.", "success");
+            }
+        }
+
+
+        // --- LOGIKA UTAMA (CRUD & RENDER) ---
+        function renderTable(data = null) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            // Gunakan data filter jika ada, jika tidak gunakan mailData asli
+            const dataSource = data !== null ? data : mailData;
+
+            if (dataSource.length === 0) {
+                const emptyMsg = (data !== null) 
+                    ? '<tr><td colspan="9" style="text-align:center; padding:30px; color:#777; background:#fff;">Data tidak ditemukan.</td></tr>'
+                    : '<tr><td colspan="9" style="text-align:center; padding:30px; color:#777; background:#fff;">Belum ada data. Silakan klik tombol "Input Data Baru".</td></tr>';
+                tbody.innerHTML = emptyMsg;
+                return;
+            }
+
+            // Urutkan data dari yang terbaru
+            const sortedData = [...dataSource].sort((a, b) => new Date(b.tanggalSurat) - new Date(a.tanggalSurat));
+
+            sortedData.forEach((item) => {
+                // Cari index asli di array mailData untuk fungsi edit/hapus
+                const originalIndex = mailData.indexOf(item);
+                
+                const tr = document.createElement('tr');
+                const dateObj = new Date(item.tanggalSurat);
+                const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                let imgBtns = '<div class="web-only" style="display:flex; flex-direction:column; gap:2px;">';
+                if(item.gambar1Base64) imgBtns += `<button class="img-btn" onclick="showImage(${originalIndex}, 1)">Lihat Img 1</button>`;
+                if(item.gambar2Base64) imgBtns += `<button class="img-btn" onclick="showImage(${originalIndex}, 2)">Lihat Img 2</button>`;
+                if(!item.gambar1Base64 && !item.gambar2Base64) imgBtns += '<small style="color:#aaa; font-size:0.7rem;">Tidak ada foto</small>';
+                imgBtns += '</div>';
+
+                let imgPrint = '<div class="print-only">';
+                if(item.gambar1Base64 || item.gambar2Base64) imgPrint += '✔ Ada Lampiran';
+                else imgPrint += '-';
+                imgPrint += '</div>';
+
+                tr.innerHTML = `
+                    <td style="text-align:center;">${originalIndex + 1}</td>
+                    <td style="font-weight:500;">${item.nomorSurat}</td>
+                    <td>${dateStr}</td>
+                    <td>${item.suratDari}</td>
+                    <td><span style="background:#eef2f7; padding:2px 6px; border-radius:4px; font-size:0.8rem; color:#2c3e50;">${item.keperluan}</span></td>
+                    <td>${item.tujuanSurat}</td>
+                    <td style="font-size:0.85rem; color:#555;">${item.isiSurat || '-'}</td>
+                    <td>${imgBtns}${imgPrint}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-action btn-edit" onclick="editData(${originalIndex})">Edit</button>
+                        <button class="btn-action btn-delete" onclick="deleteData(${originalIndex})">Hapus</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        const readFile = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        };
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerText;
+            
+            submitBtn.innerText = "Menyimpan...";
+            submitBtn.disabled = true;
+
+            const newData = {
+                nomorSurat: document.getElementById('nomorSurat').value,
+                tanggalSurat: document.getElementById('tanggalSurat').value,
+                suratDari: document.getElementById('suratDari').value,
+                keperluan: document.getElementById('keperluan').value,
+                tujuanSurat: document.getElementById('tujuanSurat').value,
+                isiSurat: document.getElementById('isiSurat').value,
+                gambar1Base64: null, 
+                gambar2Base64: null
+            };
+
+            try {
+                const f1 = document.getElementById('gambar1').files[0];
+                if(f1) { 
+                    // Validasi ukuran file (maks 2MB untuk menghemat localStorage)
+                    if(f1.size > 2 * 1024 * 1024) throw new Error("Gambar 1 terlalu besar (Maks 2MB)");
+                    newData.gambar1Base64 = await readFile(f1); 
+                }
+                else if(editIndex !== -1) { newData.gambar1Base64 = mailData[editIndex].gambar1Base64; }
+
+                const f2 = document.getElementById('gambar2').files[0];
+                if(f2) { 
+                    if(f2.size > 2 * 1024 * 1024) throw new Error("Gambar 2 terlalu besar (Maks 2MB)");
+                    newData.gambar2Base64 = await readFile(f2); 
+                }
+                else if(editIndex !== -1) { newData.gambar2Base64 = mailData[editIndex].gambar2Base64; }
+
+                if (editIndex === -1) {
+                    mailData.push(newData);
+                    showToast("Data berhasil ditambahkan!", "success");
+                } else {
+                    mailData[editIndex] = newData;
+                    showToast("Data berhasil diperbarui!", "success");
+                }
+
+                saveToDB();
+                closeModal();
+                // Panggil renderTable tanpa argumen untuk mereset filter atau tetap di filter jika diinginkan
+                // Disini kita reset tampilan ke data terbaru
+                renderTable();
+                updateLastModified();
+
+            } catch (error) {
+                console.error(error);
+                showToast(error.message || "Gagal memproses gambar.", "error");
+            } finally {
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        function deleteData(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus data ini secara permanen?")) {
+                mailData.splice(index, 1);
+                saveToDB();
+                renderTable();
+                showToast("Data telah dihapus.", "info");
+            }
+        }
+
+        function editData(index) {
+            const item = mailData[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('modalTitle').innerText = "Edit Data Surat";
+            
+            document.getElementById('nomorSurat').value = item.nomorSurat;
+            document.getElementById('tanggalSurat').value = item.tanggalSurat;
+            document.getElementById('suratDari').value = item.suratDari;
+            document.getElementById('keperluan').value = item.keperluan;
+            document.getElementById('tujuanSurat').value = item.tujuanSurat;
+            document.getElementById('isiSurat').value = item.isiSurat;
+            
+            document.getElementById('gambar1').value = "";
+            document.getElementById('gambar2').value = "";
+            
+            openModal();
+        }
+
+        function saveToDB() {
+            localStorage.setItem(DB_KEY, JSON.stringify(mailData));
+        }
+
+        // --- BACKUP & RESTORE ---
+        function backupData() {
+            const str = JSON.stringify(mailData, null, 2);
+            const blob = new Blob([str], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Backup_SuratMasuk_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("Database berhasil didownload!", "success");
+        }
+
+        function restoreData(input) {
+            const file = input.files[0];
+            if(!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if(Array.isArray(data)) {
+                        mailData = data;
+                        saveToDB();
+                        renderTable();
+                        showToast("Database berhasil dipulihkan!", "success");
+                    } else {
+                        throw new Error("Format salah");
+                    }
+                } catch(err) {
+                    showToast("File JSON tidak valid atau korup.", "error");
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        // --- MANAJEMEN MODAL ---
+        function openModal() { 
+            const modal = document.getElementById('inputModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('inputModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.getElementById('mailForm').reset();
+                document.getElementById('editIndex').value = "-1";
+                document.getElementById('modalTitle').innerText = "Input Data Surat";
+            }, 300);
+        }
+
+        function openExcelInfo() { 
+            const modal = document.getElementById('excelInfoModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+        
+        function closeExcelInfo() {
+            const modal = document.getElementById('excelInfoModal');
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+        
+        function showImage(idx, num) {
+            const src = num === 1 ? mailData[idx].gambar1Base64 : mailData[idx].gambar2Base64;
+            if(src) {
+                document.getElementById('previewImgSource').src = src;
+                const modal = document.getElementById('imageModal');
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            } else {
+                showToast("Gambar tidak tersedia.", "error");
+            }
+        }
+        
+        function closeImageModal() { 
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        // --- TOAST NOTIFICATION ---
+        function showToast(msg, type = 'default') {
+            const x = document.getElementById("toast");
+            x.innerText = msg;
+            x.className = ""; 
+            x.classList.add(type);
+            setTimeout(() => x.classList.add("show"), 10);
+            setTimeout(() => { 
+                x.classList.remove("show"); 
+            }, 3000);
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('show');
+                setTimeout(() => { event.target.style.display = 'none'; }, 300);
+            }
+        }
+    </script>
+</body>
+</html>
