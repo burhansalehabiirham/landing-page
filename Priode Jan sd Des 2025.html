@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Sasaran Mutu - KTU SMA IT Putri Abu Hurairah</title>
+    <style>
+        :root {
+            /* Color Palette */
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #c0392b;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border-color: #e0e0e0;
+            
+            /* Spacing & Radius */
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            border-left: 6px solid var(--primary-color);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title h2 {
+            font-size: 1.1rem;
+            color: var(--accent-color);
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .header-meta strong {
+            color: var(--text-main);
+        }
+
+        /* --- SECTIONS --- */
+        .section-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--bg-color);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 18px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-reset {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+        .btn-reset:hover {
+            background-color: #ffecec;
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-print {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-print:hover {
+            background-color: #1a252f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* --- INPUT GRID --- */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .input-card {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            background: #fff;
+        }
+
+        .input-card:focus-within {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .month-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--primary-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .mini-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        /* --- CHARTS SECTION --- */
+        .charts-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 10px;
+            align-items: end;
+            justify-items: center;
+        }
+
+        .chart-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .donut {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: conic-gradient(var(--bg-color) 0%, var(--bg-color) 100%);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 5px;
+            transition: background 0.5s ease-out;
+        }
+
+        .donut::after {
+            content: "";
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: var(--card-bg);
+            border-radius: 50%;
+        }
+
+        .donut-text {
+            position: relative;
+            z-index: 2;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+
+        .chart-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .summary-big-number {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+            margin: 10px 0;
+            color: var(--text-main);
+        }
+
+        .summary-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: white;
+            margin-top: 5px;
+            background-color: var(--text-muted);
+        }
+
+        /* --- TABLE & SIGNATURE --- */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 900px;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        th:first-child, td:first-child {
+            text-align: left;
+            min-width: 250px;
+            position: sticky;
+            left: 0;
+            background-color: inherit;
+            z-index: 1;
+            border-right: 2px solid var(--border-color);
+        }
+        th:first-child { z-index: 2; }
+
+        .row-header {
+            background-color: #f8f9fa;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+        .row-header small { display: block; font-weight: 400; color: var(--text-muted); font-size: 0.8em; margin-top: 4px; }
+
+        .achievement-cell { font-weight: 700; }
+        
+        .status-badge {
+            display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; color: white; min-width: 50px;
+        }
+        .bg-success { background-color: var(--success-color); }
+        .bg-warning { background-color: var(--warning-color); }
+        .bg-danger { background-color: var(--danger-color); }
+        .bg-neutral { background-color: var(--text-muted); }
+
+        /* --- SIGNATURE BLOCK (New) --- */
+        .signature-section {
+            display: flex;
+            justify-content: flex-end; /* Align to right */
+            margin-top: 20px;
+            padding-right: 20px;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 250px;
+        }
+
+        .sig-place-date { margin-bottom: 5px; }
+        .sig-title { margin-bottom: 60px; /* Space for signature */ font-weight: bold; }
+        .sig-name { font-weight: bold; text-decoration: underline; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .charts-wrapper { grid-template-columns: 1fr; }
+            .summary-box { display: flex; flex-direction: row; justify-content: space-around; padding: 15px; }
+            .summary-big-number { font-size: 2.5rem; margin: 0 15px; }
+        }
+
+        /* --- PRINT STYLES (LANDSCAPE & CLEAN) --- */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 1.5cm;
+            }
+
+            body { 
+                background: white; 
+                padding: 0; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+            }
+
+            .container { 
+                max-width: 100%; 
+                box-shadow: none; 
+                width: 100%;
+            }
+
+            /* Hide Interactive Elements */
+            .input-grid, 
+            .charts-wrapper, 
+            .btn-group, 
+            footer { 
+                display: none !important; 
+            }
+
+            /* Clean up layout for print */
+            .section-card { 
+                box-shadow: none; 
+                border: none; 
+                padding: 0; 
+                margin: 0; 
+                margin-bottom: 20px;
+            }
+
+            .section-header {
+                border-bottom: 2px solid #000;
+                margin-bottom: 20px;
+            }
+
+            /* Table Styling for Print */
+            .table-responsive { border: 2px solid #000; overflow: visible; }
+            table { width: 100%; min-width: 100%; }
+            
+            th, td {
+                border: 1px solid #000 !important; /* Solid black borders */
+                color: #000 !important;
+                padding: 8px;
+                font-size: 10pt; /* Slightly smaller for fit */
+            }
+            
+            th { 
+                background-color: #eee !important; 
+                color: #000 !important; 
+                -webkit-print-color-adjust: exact;
+            }
+
+            /* Fix sticky columns for print */
+            th:first-child, td:first-child {
+                position: static;
+                border-right: 1px solid #000 !important;
+            }
+
+            /* Signature Block Print Adjustments */
+            .signature-section {
+                margin-top: 30px;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- HEADER -->
+    <header>
+        <div class="header-title">
+            <h1>KTU SMA IT Putri Abu Hurairah Mataram</h1>
+            <h2>A. SASARAN MUTU (TAHUNAN)</h2>
+        </div>
+        <div class="header-meta">
+            <p>Tanggal Laporan: <strong id="currentDate">-</strong></p>
+            <p style="font-size: 0.8rem; margin-top:4px;">Periode: Jan s.d. Des 2025</p>
+        </div>
+    </header>
+
+    <!-- INPUT SECTION -->
+    <section class="section-card">
+        <div class="section-header">
+            <div class="section-title">Input Data Bulanan</div>
+            <button class="btn btn-reset" onclick="resetData()">Reset Data</button>
+        </div>
+        <div class="input-grid" id="inputContainer">
+            <!-- JS generated inputs -->
+        </div>
+    </section>
+
+    <!-- VISUALIZATION SECTION -->
+    <section class="section-card">
+        <div class="section-header">
+            <div class="section-title">Visualisasi Pencapaian</div>
+        </div>
+        <div class="charts-wrapper">
+            <div class="charts-grid" id="chartsContainer">
+                <!-- JS generated charts -->
+            </div>
+            <div class="summary-box">
+                <span style="font-size:0.9rem; color:#666; font-weight:600;">TOTAL TAHUNAN</span>
+                <div class="summary-big-number" id="totalPercentage">0%</div>
+                <div id="totalStatusBadge" class="summary-status bg-neutral">Belum Ada Data</div>
+                <div style="margin-top: 10px; font-size: 0.8rem; color: #888;">
+                    Target: <span id="totalTarget">0</span> | Realisasi: <span id="totalRealization">0</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TABLE REPORT SECTION -->
+    <section class="section-card">
+        <div class="section-header">
+            <div class="section-title">Laporan Detail</div>
+            <div class="btn-group">
+                <button class="btn btn-print" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Cetak Laporan
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Sasaran Mutu</th>
+                        <th style="width: 10%;">Satuan</th>
+                        <th>Jan</th>
+                        <th>Feb</th>
+                        <th>Mar</th>
+                        <th>Apr</th>
+                        <th>Mey</th>
+                        <th>Jun</th>
+                        <th>Jul</th>
+                        <th>Ags</th>
+                        <th>Sep</th>
+                        <th>Oct</th>
+                        <th>Nov</th>
+                        <th>Des</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Row 1: Deskripsi & Target -->
+                    <tr>
+                        <td class="row-header" rowspan="3">
+                            Pengarsipan Surat Menyurat<br>
+                            <small>(Surat Masuk & Keluar)</small><br>
+                            <div style="margin-top:5px; font-size:0.75rem; color:#666; font-weight:normal;">
+                                Standar: Mencapai 100% pengarsipan tepat waktu.
+                            </div>
+                        </td>
+                        <td style="font-weight:bold; background:#fafafa;">Target</td>
+                        <td class="cell-target" data-month="0">0</td>
+                        <td class="cell-target" data-month="1">0</td>
+                        <td class="cell-target" data-month="2">0</td>
+                        <td class="cell-target" data-month="3">0</td>
+                        <td class="cell-target" data-month="4">0</td>
+                        <td class="cell-target" data-month="5">0</td>
+                        <td class="cell-target" data-month="6">0</td>
+                        <td class="cell-target" data-month="7">0</td>
+                        <td class="cell-target" data-month="8">0</td>
+                        <td class="cell-target" data-month="9">0</td>
+                        <td class="cell-target" data-month="10">0</td>
+                        <td class="cell-target" data-month="11">0</td>
+                        <td id="tableTotalTarget" style="font-weight:bold; background:#eee;">0</td>
+                    </tr>
+                    <!-- Row 2: Realisasi -->
+                    <tr>
+                        <td style="font-weight:bold; background:#fafafa;">Realisasi</td>
+                        <td class="cell-real" data-month="0">0</td>
+                        <td class="cell-real" data-month="1">0</td>
+                        <td class="cell-real" data-month="2">0</td>
+                        <td class="cell-real" data-month="3">0</td>
+                        <td class="cell-real" data-month="4">0</td>
+                        <td class="cell-real" data-month="5">0</td>
+                        <td class="cell-real" data-month="6">0</td>
+                        <td class="cell-real" data-month="7">0</td>
+                        <td class="cell-real" data-month="8">0</td>
+                        <td class="cell-real" data-month="9">0</td>
+                        <td class="cell-real" data-month="10">0</td>
+                        <td class="cell-real" data-month="11">0</td>
+                        <td id="tableTotalReal" style="font-weight:bold; background:#eee;">0</td>
+                    </tr>
+                    <!-- Row 3: Pencapaian % -->
+                    <tr>
+                        <td style="font-weight:bold; background:#fafafa;">%</td>
+                        <td class="cell-pct" data-month="0">0%</td>
+                        <td class="cell-pct" data-month="1">0%</td>
+                        <td class="cell-pct" data-month="2">0%</td>
+                        <td class="cell-pct" data-month="3">0%</td>
+                        <td class="cell-pct" data-month="4">0%</td>
+                        <td class="cell-pct" data-month="5">0%</td>
+                        <td class="cell-pct" data-month="6">0%</td>
+                        <td class="cell-pct" data-month="7">0%</td>
+                        <td class="cell-pct" data-month="8">0%</td>
+                        <td class="cell-pct" data-month="9">0%</td>
+                        <td class="cell-pct" data-month="10">0%</td>
+                        <td class="cell-pct" data-month="11">0%</td>
+                        <td id="tableTotalPct" class="achievement-cell" style="background:#eee;">0%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SIGNATURE BLOCK -->
+        <div class="signature-section">
+            <div class="signature-block">
+                <p class="sig-place-date">Mataram, <span id="sigDate">...</span></p>
+                <p class="sig-title">Kepala Sekolah,</p>
+                <br>
+                <p class="sig-name"><strong>Gunawan Trianto</strong></p>
+            </div>
+        </div>
+
+    </section>
+
+    <footer>
+        <p>&copy; 2026 KTU SMA IT Putri Abu Hurairah Mataram</p>
+    </footer>
+</div>
+
+<script>
+    // --- KONFIGURASI DAN STATE ---
+    const months = [
+        "Jan", "Feb", "Mar", "Apr", "Mey", "Jun", 
+        "Jul", "Ags", "Sep", "Oct", "Nov", "Des"
+    ];
+
+    let monthlyData = months.map(() => ({ target: 0, realization: 0 }));
+
+    const inputContainer = document.getElementById('inputContainer');
+    const chartsContainer = document.getElementById('chartsContainer');
+    const dateElement = document.getElementById('currentDate');
+    const sigDateElement = document.getElementById('sigDate');
+
+    // --- INISIALISASI ---
+    function init() {
+        // Set Tanggal (Format Indonesia)
+        const now = new Date();
+        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        const formattedDate = now.toLocaleDateString('id-ID', dateOptions);
+        
+        dateElement.textContent = formattedDate;
+        sigDateElement.textContent = formattedDate;
+
+        renderInputs();
+        renderCharts();
+        calculateAll();
+    }
+
+    // --- RENDER FUNCTIONS ---
+    function renderInputs() {
+        inputContainer.innerHTML = '';
+        months.forEach((m, idx) => {
+            const card = document.createElement('div');
+            card.className = 'input-card';
+            card.innerHTML = `
+                <span class="month-badge">${m}</span>
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Target</label>
+                    <input type="number" min="0" placeholder="0" 
+                           value="${monthlyData[idx].target}" 
+                           oninput="updateData(${idx}, 'target', this.value)">
+                </div>
+                <div class="form-group">
+                    <label>Realisasi</label>
+                    <input type="number" min="0" placeholder="0" 
+                           value="${monthlyData[idx].realization}" 
+                           oninput="updateData(${idx}, 'realization', this.value)">
+                </div>
+                <div class="mini-stat">
+                    <span style="color:#666">Capai:</span>
+                    <span id="val-pct-${idx}" style="font-weight:bold; color:#999;">0%</span>
+                </div>
+            `;
+            inputContainer.appendChild(card);
+        });
+    }
+
+    function renderCharts() {
+        chartsContainer.innerHTML = '';
+        months.forEach((m, idx) => {
+            const item = document.createElement('div');
+            item.className = 'chart-item';
+            item.innerHTML = `
+                <div class="donut" id="chart-${idx}">
+                    <span class="donut-text" id="chart-txt-${idx}">0%</span>
+                </div>
+                <span class="chart-label">${m}</span>
+            `;
+            chartsContainer.appendChild(item);
+        });
+    }
+
+    // --- CORE LOGIC ---
+    window.updateData = function(index, field, value) {
+        const val = parseInt(value);
+        monthlyData[index][field] = isNaN(val) ? 0 : val;
+        calculateAll();
+    }
+
+    window.resetData = function() {
+        if(confirm('Apakah Anda yakin ingin menghapus semua data?')) {
+            monthlyData = months.map(() => ({ target: 0, realization: 0 }));
+            renderInputs();
+            calculateAll();
+        }
+    }
+
+    function calculateAll() {
+        let sumTarget = 0;
+        let sumReal = 0;
+
+        monthlyData.forEach((data, i) => {
+            const target = data.target;
+            const real = data.realization;
+
+            sumTarget += target;
+            sumReal += real;
+
+            let pct = 0;
+            if (target > 0) {
+                pct = Math.round((real / target) * 100);
+            } else if (real > 0 && target === 0) {
+                pct = 100; 
+            }
+
+            // Update Card
+            document.getElementById(`val-pct-${i}`).textContent = `${pct}%`;
+            document.getElementById(`val-pct-${i}`).style.color = getColor(pct);
+
+            // Update Table
+            document.querySelector(`.cell-target[data-month="${i}"]`).textContent = target;
+            document.querySelector(`.cell-real[data-month="${i}"]`).textContent = real;
+            
+            const cellPct = document.querySelector(`.cell-pct[data-month="${i}"]`);
+            cellPct.textContent = `${pct}%`;
+            cellPct.className = `cell-pct achievement-cell ${getBadgeClass(pct)}`;
+
+            // Update Chart
+            const donut = document.getElementById(`chart-${i}`);
+            const donutTxt = document.getElementById(`chart-txt-${i}`);
+            const color = getColor(pct);
+            let visualPct = pct > 100 ? 100 : pct; 
+            
+            donut.style.background = `conic-gradient(${color} 0% ${visualPct}%, #eee ${visualPct}% 100%)`;
+            donutTxt.textContent = `${pct}%`;
+            donutTxt.style.color = color;
+        });
+
+        // Update Totals
+        document.getElementById('tableTotalTarget').textContent = sumTarget;
+        document.getElementById('tableTotalReal').textContent = sumReal;
+        document.getElementById('totalTarget').textContent = sumTarget;
+        document.getElementById('totalRealization').textContent = sumReal;
+
+        let totalPct = 0;
+        if (sumTarget > 0) {
+            totalPct = ((sumReal / sumTarget) * 100).toFixed(1);
+        }
+
+        document.getElementById('totalPercentage').textContent = `${totalPct}%`;
+        
+        const statusBadge = document.getElementById('totalStatusBadge');
+        const tableTotalPct = document.getElementById('tableTotalPct');
+        
+        tableTotalPct.textContent = `${totalPct}%`;
+
+        if (sumTarget === 0 && sumReal === 0) {
+            statusBadge.textContent = "Belum Ada Data";
+            statusBadge.className = "summary-status bg-neutral";
+            tableTotalPct.className = "achievement-cell";
+        } else if (parseFloat(totalPct) >= 100) {
+            statusBadge.textContent = "TARGET TERCAPAI";
+            statusBadge.className = "summary-status bg-success";
+            tableTotalPct.className = "achievement-cell bg-success";
+        } else {
+            statusBadge.textContent = "BELUM CAPAI";
+            statusBadge.className = "summary-status bg-danger";
+            tableTotalPct.className = "achievement-cell bg-danger";
+        }
+    }
+
+    function getColor(pct) {
+        if (pct >= 100) return 'var(--success-color)';
+        if (pct >= 80) return 'var(--accent-color)'; 
+        if (pct >= 50) return 'var(--warning-color)';
+        return 'var(--danger-color)';
+    }
+
+    function getBadgeClass(pct) {
+        if (pct >= 100) return 'bg-success';
+        if (pct >= 50) return 'bg-warning';
+        return 'bg-danger';
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
